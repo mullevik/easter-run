@@ -2,6 +2,7 @@ use axum::{extract::Query, response::Json, routing::get, Router};
 use geo::{HaversineBearing, Point};
 use serde::{Deserialize, Serialize};
 
+mod track;
 
 #[derive(Deserialize)]
 struct Coordinates {
