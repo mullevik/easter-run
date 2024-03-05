@@ -4,7 +4,7 @@ use geo::{HaversineBearing, Point};
 use serde::{Deserialize, Serialize};
 
 mod track;
-use track::{build_small_track, get_point_on_track_at_time};
+use track::{build_small_track, get_point_on_track_at_time, get_signal_strength};
 
 
 #[derive(Deserialize)]
@@ -14,8 +14,9 @@ struct Coordinates {
 }
 
 #[derive(Serialize, Deserialize)]
-struct Bearing {
-    bearing: f64
+struct Signal {
+    bearing: f64,
+    strength: i32,
 }
 
 
@@ -25,7 +26,7 @@ fn get_reset_origin() -> DateTime<Utc> {
 
 
 fn build_router() -> Router {
-    Router::new().route("/", get(get_bearing))
+    Router::new().route("/", get(get_signal))
 }
 
 #[tokio::main]
@@ -41,7 +42,7 @@ async fn main() {
     axum::serve(listener, router).await.unwrap();
 }
 
-async fn get_bearing(Query(params): Query<Coordinates>) -> Json<Bearing> {
+async fn get_signal(Query(params): Query<Coordinates>) -> Json<Signal> {
     // let point = Point::new(40.7128, -74.0060); // New York City coordinates
     let user_point = Point::new(params.latitude, params.longitude);
 
@@ -50,9 +51,10 @@ async fn get_bearing(Query(params): Query<Coordinates>) -> Json<Bearing> {
     let track = build_small_track();
     let target = get_point_on_track_at_time(&track, Utc::now(), reset_origin);
 
-    let bearing_to_goal = user_point.haversine_bearing(target);
+    let bearing_to_target = user_point.haversine_bearing(target);
+    let signal_strength = get_signal_strength(user_point, target);
 
-    Json(Bearing{bearing: bearing_to_goal})
+    Json(Signal{bearing: bearing_to_target, strength: signal_strength})
 }
 
 
@@ -68,9 +70,10 @@ mod tests {
     #[tokio::test]
     async fn test_bearing_api() {
         let query = "latitude=50.72431&longitude=15.17108";  // Jablonec nad Nisou
-        let actual = serde_json::from_str::<Bearing>(send_request_get_body(query).await.as_str()).unwrap();
+        let actual = serde_json::from_str::<Signal>(send_request_get_body(query).await.as_str()).unwrap();
         assert!(actual.bearing >= -180.);
         assert!(actual.bearing <= -90.);
+        assert_eq!(actual.strength, 0);
     }
 
     async fn send_request_get_body(query: &str) -> String {

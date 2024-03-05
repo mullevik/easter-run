@@ -1,6 +1,6 @@
 
 use chrono::{DateTime, TimeDelta, Utc};
-use geo::{LineInterpolatePoint, LineString, Point};
+use geo::{GeodesicDistance, LineInterpolatePoint, LineString, Point};
 
 
 type MS = i64;
@@ -48,6 +48,22 @@ fn get_latest_track_beginning(track: &Track, at: DateTime<Utc>, reset_at: DateTi
     let n_rounds = since_reset.num_milliseconds() / track.duration();
     let completed_rounds_duration = n_rounds * track.duration();
     reset_at + TimeDelta::milliseconds(completed_rounds_duration)
+}
+
+pub fn get_signal_strength(from: Point, to: Point) -> i32 {
+    // # Returns
+    // Signal strength: value 0 - 10 where 0 is the lowest signal strength and 10 the strongest.
+    // 
+    // If further than 100 meters, 0 is returned.
+    // 
+    // If closer than 10 meters, 10 is returned.
+    let dist = from.geodesic_distance(&to);
+    println!("{dist}");
+    if dist > 100. {
+        return 0
+    }
+
+    10 - (dist / 10.).floor() as i32
 }
 
 pub fn get_point_on_track_at_time(track: &Track, at: DateTime<Utc>, reset_at: DateTime<Utc>) -> Point {
@@ -130,6 +146,17 @@ mod tests {
 
         assert!(in_between.y() < second_point.y());
         assert!(in_between.y() > first_point.y());
+    }
+
+    #[test]
+    fn test_signal_strength() {
+        let a = Point::new(50.72431, 15.17108);
+        let b = Point::new(50.061495, 14.425202);
+        let close_to_b = Point::new(50.0614, 14.4252);
+
+        assert_eq!(get_signal_strength(a, b), 0);
+        assert_eq!(get_signal_strength(a, a), 10);
+        assert_eq!(get_signal_strength(b, close_to_b), 9);
     }
 
 }
