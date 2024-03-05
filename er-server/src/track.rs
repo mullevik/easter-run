@@ -1,6 +1,6 @@
 
 use chrono::{DateTime, TimeDelta, Utc};
-use geo::{Line, LineInterpolatePoint, LineString, Point};
+use geo::{LineInterpolatePoint, LineString, Point};
 
 
 type MS = i64;
@@ -14,7 +14,6 @@ struct WayPoint {
 struct Track {
     waypoints: Vec<WayPoint>
 }
-
 impl Track {
     
     fn new(waypoints: Vec<WayPoint>) -> Self {
@@ -83,35 +82,53 @@ mod tests {
         
         let first = WayPoint{point: Point::new(50.061495, 14.425202), timestamp: 0};
         let second = WayPoint{point: Point::new(50.058621, 14.431561), timestamp: 3 * 60 * 1000};
+        let third = WayPoint{point: Point::new(50.061495, 14.425202), timestamp:  6 * 60 * 1000};
 
 
-        assert_eq!(track.duration(), 3 * 60 * 1000);
+        assert_eq!(track.duration(), 6 * 60 * 1000);
         
         assert_eq!(track.waypoint_before(-30), &first);
         assert_eq!(track.waypoint_before(0), &first);
         assert_eq!(track.waypoint_before(666), &first);
-        assert_eq!(track.waypoint_before(666 * 1000), &second);
+        assert_eq!(track.waypoint_before(5 * 60 * 1000), &second);
+        assert_eq!(track.waypoint_before(60 * 60 * 1000), &third);
 
         assert_eq!(track.waypoint_after(-30), &first);
         assert_eq!(track.waypoint_after(0), &second);
         assert_eq!(track.waypoint_after(666), &second);
-        assert_eq!(track.waypoint_after(666 * 1000), &second);
+        assert_eq!(track.waypoint_after(5 * 60 * 1000), &third);
+        assert_eq!(track.waypoint_after(60 * 60 * 1000), &third);
     }
 
     #[test]
     fn test_point_on_track_at_time() {
         let track = build_small_track();
+        let now = Utc::now();
+        
+        let first_point = Point::new(50.061495, 14.425202);
+        let second_point = Point::new(50.058621, 14.431561);
 
-        todo!("test this")
+        assert_eq!(get_point_on_track_at_time(&track, now, now), first_point);
+        assert_eq!(get_point_on_track_at_time(&track, now + TimeDelta::milliseconds(3 * 60 * 1000), now), second_point);
+        assert_eq!(get_point_on_track_at_time(&track, now + TimeDelta::milliseconds(6 * 60 * 1000), now), first_point);
+        assert_eq!(get_point_on_track_at_time(&track, now + TimeDelta::milliseconds(999 * 6 * 60 * 1000), now), first_point);
+
+        let in_between = get_point_on_track_at_time(&track, now + TimeDelta::milliseconds(90 * 1000), now);
+        assert!(in_between.x() > second_point.x());
+        assert!(in_between.x() < first_point.x());
+
+        assert!(in_between.y() < second_point.y());
+        assert!(in_between.y() > first_point.y());
     }
 
     fn build_small_track() -> Track {
         let start = Point::new(50.061495, 14.425202);  // Prague: near Vysehrad
-        let end = Point::new(50.058621, 14.431561);  // Prague: near Prazskeho Povstani
+        let middle = Point::new(50.058621, 14.431561);  // Prague: near Prazskeho Povstani
         let waypoints = vec![
             WayPoint{point: start, timestamp: 0},
-            WayPoint{point: end, timestamp: 3 * 60 * 1000}
+            WayPoint{point: middle, timestamp: 3 * 60 * 1000},
+            WayPoint{point: start, timestamp: 6 * 60 * 1000},
         ];
-        Track{waypoints: waypoints}
+        Track::new(waypoints)
     }
 }
