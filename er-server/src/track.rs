@@ -58,7 +58,6 @@ pub fn get_signal_strength(from: Point, to: Point) -> i32 {
     // 
     // If closer than 10 meters, 10 is returned.
     let dist = from.geodesic_distance(&to);
-    println!("{dist}");
     if dist > 100. {
         return 0
     }
