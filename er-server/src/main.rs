@@ -1,8 +1,11 @@
 use axum::{extract::Query, response::Json, routing::get, Router};
+use chrono::{DateTime, TimeZone, Utc};
 use geo::{HaversineBearing, Point};
 use serde::{Deserialize, Serialize};
 
 mod track;
+use track::{build_small_track, get_point_on_track_at_time};
+
 
 #[derive(Deserialize)]
 struct Coordinates {
@@ -16,8 +19,8 @@ struct Bearing {
 }
 
 
-fn get_goal() -> Point {
-    Point::new(50.073658, 14.418540)  // Prague
+fn get_reset_origin() -> DateTime<Utc> {
+    Utc.with_ymd_and_hms(2024, 1, 1, 0, 0, 0).unwrap()
 }
 
 
@@ -42,7 +45,12 @@ async fn get_bearing(Query(params): Query<Coordinates>) -> Json<Bearing> {
     // let point = Point::new(40.7128, -74.0060); // New York City coordinates
     let user_point = Point::new(params.latitude, params.longitude);
 
-    let bearing_to_goal = user_point.haversine_bearing(get_goal());
+    let reset_origin = get_reset_origin();
+
+    let track = build_small_track();
+    let target = get_point_on_track_at_time(&track, Utc::now(), reset_origin);
+
+    let bearing_to_goal = user_point.haversine_bearing(target);
 
     Json(Bearing{bearing: bearing_to_goal})
 }

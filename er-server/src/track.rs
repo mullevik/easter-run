@@ -11,7 +11,7 @@ struct WayPoint {
     timestamp: MS,
 }
 
-struct Track {
+pub struct Track {
     waypoints: Vec<WayPoint>
 }
 impl Track {
@@ -50,7 +50,7 @@ fn get_latest_track_beginning(track: &Track, at: DateTime<Utc>, reset_at: DateTi
     reset_at + TimeDelta::milliseconds(completed_rounds_duration)
 }
 
-fn get_point_on_track_at_time(track: &Track, at: DateTime<Utc>, reset_at: DateTime<Utc>) -> Point {
+pub fn get_point_on_track_at_time(track: &Track, at: DateTime<Utc>, reset_at: DateTime<Utc>) -> Point {
     
     let latest_track_beginning = get_latest_track_beginning(track, at, reset_at);
     let since_latest_beginning = at.signed_duration_since(latest_track_beginning);
@@ -69,6 +69,17 @@ fn get_point_on_track_at_time(track: &Track, at: DateTime<Utc>, reset_at: DateTi
     let interpolation_fraction = since_latest_waypoint as f64 / line_duration as f64;
 
     line.line_interpolate_point(interpolation_fraction).unwrap_or(latest_waypoint.point)
+}
+
+pub fn build_small_track() -> Track {
+    let start = Point::new(50.061495, 14.425202);  // Prague: near Vysehrad
+    let middle = Point::new(50.058621, 14.431561);  // Prague: near Prazskeho Povstani
+    let waypoints = vec![
+        WayPoint{point: start, timestamp: 0},
+        WayPoint{point: middle, timestamp: 3 * 60 * 1000},
+        WayPoint{point: start, timestamp: 6 * 60 * 1000},
+    ];
+    Track::new(waypoints)
 }
 
 
@@ -121,14 +132,4 @@ mod tests {
         assert!(in_between.y() > first_point.y());
     }
 
-    fn build_small_track() -> Track {
-        let start = Point::new(50.061495, 14.425202);  // Prague: near Vysehrad
-        let middle = Point::new(50.058621, 14.431561);  // Prague: near Prazskeho Povstani
-        let waypoints = vec![
-            WayPoint{point: start, timestamp: 0},
-            WayPoint{point: middle, timestamp: 3 * 60 * 1000},
-            WayPoint{point: start, timestamp: 6 * 60 * 1000},
-        ];
-        Track::new(waypoints)
-    }
 }
