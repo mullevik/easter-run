@@ -33,7 +33,7 @@ WORKDIR /app
 COPY --from=builder /app/target/release/er-server /app/er-server
 
 # Expose the port the application will run on
-EXPOSE 3000
+EXPOSE 8080
 
 # Command to run the application
 CMD ["/app/er-server"]
