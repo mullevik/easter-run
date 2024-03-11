@@ -16,13 +16,18 @@ jobs:
     - name: Checkout code
       uses: actions/checkout@v2
 
-    - name: Set up Rust
-      uses: actions/setup-rust@v1
-      with:
-        rust-version: 1.58.0
+    - name: Update rust toolchain
+      run: |
+        rustup update
+        rustup install nightly        
 
+    - name: Toolchain info
+      run: |
+        cargo --version --verbose
+        rustc --version
+  
     - name: Build and test
       run: |
-        cargo build --verbose
-        cargo test --verbose
-
+        cd er-server
+        cargo check
+        cargo test --all    
