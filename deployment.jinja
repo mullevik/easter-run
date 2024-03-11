@@ -1,0 +1,70 @@
+# Google cloud deployment manager definition file
+
+imports:
+- path: api-gateway.jinja
+
+resources:
+- name: er-api-config
+  type: gcp-types/apigateway-v1:projects.locations.apis
+  properties:
+    apiConfig:
+      openapi: "3.0.0"
+      info:
+        title: "Easter run server"
+        version: "1.0.0"
+      paths:
+        "/":
+          get:
+            operationId: "getSignal"
+            x-google-backend:
+              address: $(ref.er-cloud-run-service.status.address.url)
+              path_translation: APPEND_PATH_TO_ADDRESS
+            responses:
+              '200':
+                description: "Successful response"
+      endpoints:
+      - name: get_signal
+        allow_cors: true
+        target: $(ref.er-cloud-run-service.status.address.url)
+        allow_methods:
+          - GET
+
+- name: er-gateway
+  type: gcp-types/apigateway-v1:projects.locations.gateway
+  properties:
+    apiConfig: $(ref.er-api-config.name)
+    defaultRouteAction:
+      routeAction:
+        method: GET
+        urlAction:
+          staticRouteAction:
+            httpRouteAction:
+              corsPolicy:
+                allowCredentials: false
+                allowHeaders:
+                - "*"
+                allowMethods:
+                - GET
+                allowOrigins:
+                - "*"
+              timeout: 3s
+              weightedBackendServices:
+              - backendService:
+                  backendService: $(ref.er-cloud-run-service)
+
+- name: er-cloud-run-service
+  type: gcp-types/cloudrun-v1:projects.locations.services
+  properties:
+    location: {{ env["REGION"] }}
+    metadata:
+      annotations:
+        client.knative.dev/user-image: gcr.io/{{ env["PROJECT_ID"] }}/er-server:latest
+    spec:
+      template:
+        metadata:
+          annotations:
+            autoscaling.knative.dev/minScale: "0"
+            autoscaling.knative.dev/maxScale: "1"
+        spec:
+          containers:
+          - image: gcr.io/{{ env["PROJECT_ID"] }}/er-server:latest
