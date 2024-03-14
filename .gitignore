@@ -13,4 +13,8 @@ er-server/Cargo.lock
 # MSVC Windows builds of rustc generate these, which store debugging information
 *.pdb
 
-.secret_env
+dev.secret.tfvars
+service_account_key.secret.json
+
+.terraform*
+terraform*
