@@ -15,4 +15,22 @@ resource "google_cloud_run_service" "cloud-run-er-server" {
       }
     }
   }
+
+}
+
+data "google_iam_policy" "noauth" {
+  binding {
+    role = "roles/run.invoker"
+    members = [
+      "allUsers",
+    ]
+  }
+}
+
+resource "google_cloud_run_service_iam_policy" "noauth" {
+  location    = google_cloud_run_service.cloud-run-er-server.location
+  project     = google_cloud_run_service.cloud-run-er-server.project
+  service     = google_cloud_run_service.cloud-run-er-server.name
+
+  policy_data = data.google_iam_policy.noauth.policy_data
 }

@@ -40,3 +40,16 @@ Clean infrastructure
 ```
 tofu destroy -var-file dev.secret.tfvars
 ```
+
+
+### Additional notes
+
+#### GCP service account
+The GCP service account has been used with an exported JSON access key. 
+The access key is passed to terraform so that it can manage resources.
+The service account needs additional roles to be able to actually do anything.
+
+Here are all the assigned roles:
+- Editor
+- Service Account User
+- Cloud Run Admin
