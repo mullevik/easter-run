@@ -1,19 +1,23 @@
-FROM rust:alpine
+FROM rust:1.76-slim-bullseye as build
+
+RUN USER=root cargo new --bin er-server
 WORKDIR /er-server
-RUN apk add --no-cache musl-dev
 
-# todo:
-# this uses the new buildKit ... learn more!
-# this does not optimize the toml.lock cache I think...
-RUN --mount=type=bind,source=src,target=src \
-    --mount=type=bind,source=Cargo.toml,target=Cargo.toml \
-    --mount=type=bind,source=Cargo.lock,target=Cargo.lock \
-    --mount=type=cache,target=/app/target/ \
-    --mount=type=cache,target=/usr/local/cargo/registry/ \
-    <<EOF
-set -e
-cargo build --locked --release
-EOF
+COPY ./Cargo.lock ./Cargo.lock
+COPY ./Cargo.toml ./Cargo.toml
 
-CMD ["/er-server/target/release/er-server"]
+RUN cargo build --release & rm src/*.rs
+
+COPY ./src ./src
+
+# RUN rm ./target/release/deps/er-server*
+RUN cargo build --release
+
+FROM rust:1.76-slim-bullseye
+
+# RUN apt update && apt install libc6
+
+COPY --from=build /er-server/target/release/er-server .
+
+CMD ["./er-server"]
 EXPOSE 8080

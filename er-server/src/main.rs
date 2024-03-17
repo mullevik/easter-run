@@ -35,17 +35,13 @@ async fn main() {
         _ = tokio::signal::ctrl_c().await;
         println!("Initiating graceful shutdown");
     };
-
     
-    // build our application with a route
     let router = build_router();
-
     
-    // run it
     let listener = tokio::net::TcpListener::bind("0.0.0.0:8080")
         .await
         .unwrap();
-    println!("listening on {}", listener.local_addr().unwrap());
+    println!("server listens on {}", listener.local_addr().unwrap());
     axum::serve(listener, router).with_graceful_shutdown(quit_sig).await.unwrap();
 }
 
