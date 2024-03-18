@@ -10,14 +10,13 @@ RUN cargo build --release & rm src/*.rs
 
 COPY ./src ./src
 
-# RUN rm ./target/release/deps/er-server*
 RUN cargo build --release
 
 FROM rust:1.76-slim-bullseye
 
-# RUN apt update && apt install libc6
-
 COPY --from=build /er-server/target/release/er-server .
+
+ENV RUST_LOG=info
 
 CMD ["./er-server"]
 EXPOSE 8080
