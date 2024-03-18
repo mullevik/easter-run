@@ -1,3 +1,4 @@
+use log::info;
 use axum::{extract::Query, response::Json, routing::get, Router};
 use chrono::{DateTime, TimeZone, Utc};
 use geo::{HaversineBearing, Point};
@@ -31,9 +32,11 @@ fn build_router() -> Router {
 
 #[tokio::main]
 async fn main() {
+    env_logger::init();
+
     let quit_sig = async {
         _ = tokio::signal::ctrl_c().await;
-        println!("Initiating graceful shutdown");
+       info!("SIGTERM detected - shutting down")
     };
     
     let router = build_router();
@@ -41,7 +44,7 @@ async fn main() {
     let listener = tokio::net::TcpListener::bind("0.0.0.0:8080")
         .await
         .unwrap();
-    println!("server listens on {}", listener.local_addr().unwrap());
+    info!("server listens on {}", listener.local_addr().unwrap());
     axum::serve(listener, router).with_graceful_shutdown(quit_sig).await.unwrap();
 }
 
