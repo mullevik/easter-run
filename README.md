@@ -33,6 +33,8 @@ tofu plan -var-file dev.secret.tfvars
 tofu apply -var-file dev.secret.tfvars
 ```
 
+> use `curl $(tofu output -raw cloud_run_er_server_url)"/?latitude=0&longitude=15"` to see that it is online
+
 
 ## Cleanup
 
@@ -42,9 +44,10 @@ tofu destroy -var-file dev.secret.tfvars
 ```
 
 
-### Additional notes
+## Notes
 
-#### GCP service account
+
+### GCP service account
 The GCP service account has been used with an exported JSON access key. 
 The access key is passed to terraform so that it can manage resources.
 The service account needs additional roles to be able to actually do anything.
