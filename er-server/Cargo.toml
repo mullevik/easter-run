@@ -19,3 +19,4 @@ http-body-util = "0.1.0"
 chrono = "0.4.34"
 log = "0.4.21"
 env_logger = "0.11.3"
+tower-http = { version = "0.5.2", features = ["cors"] }

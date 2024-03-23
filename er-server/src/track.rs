@@ -58,6 +58,10 @@ pub fn get_signal_strength(from: Point, to: Point) -> i32 {
     // 
     // If closer than 10 meters, 10 is returned.
     let dist = from.geodesic_distance(&to);
+    if dist.is_nan() {
+        return 0
+    }
+
     if dist > 100. {
         return 0
     }
@@ -87,8 +91,8 @@ pub fn get_point_on_track_at_time(track: &Track, at: DateTime<Utc>, reset_at: Da
 }
 
 pub fn build_small_track() -> Track {
-    let start = Point::new(50.061495, 14.425202);  // Prague: near Vysehrad
-    let middle = Point::new(50.058621, 14.431561);  // Prague: near Prazskeho Povstani
+    let start = Point::new(14.425202, 50.061495);  // Prague: near Vysehrad
+    let middle = Point::new(14.431561, 50.058621);  // Prague: near Prazskeho Povstani
     let waypoints = vec![
         WayPoint{point: start, timestamp: 0},
         WayPoint{point: middle, timestamp: 3 * 60 * 1000},
@@ -100,15 +104,17 @@ pub fn build_small_track() -> Track {
 
 #[cfg(test)]
 mod tests {
+    use geo::HaversineBearing;
+
     use super::*;
 
     #[test]
     fn test_track() {
         let track = build_small_track();
         
-        let first = WayPoint{point: Point::new(50.061495, 14.425202), timestamp: 0};
-        let second = WayPoint{point: Point::new(50.058621, 14.431561), timestamp: 3 * 60 * 1000};
-        let third = WayPoint{point: Point::new(50.061495, 14.425202), timestamp:  6 * 60 * 1000};
+        let first = WayPoint{point: Point::new(14.425202, 50.061495), timestamp: 0};
+        let second = WayPoint{point: Point::new(14.431561, 50.058621), timestamp: 3 * 60 * 1000};
+        let third = WayPoint{point: Point::new(14.425202, 50.061495), timestamp:  6 * 60 * 1000};
 
 
         assert_eq!(track.duration(), 6 * 60 * 1000);
@@ -131,8 +137,8 @@ mod tests {
         let track = build_small_track();
         let now = Utc::now();
         
-        let first_point = Point::new(50.061495, 14.425202);
-        let second_point = Point::new(50.058621, 14.431561);
+        let first_point = Point::new(14.425202, 50.061495);
+        let second_point = Point::new(14.431561, 50.058621);
 
         assert_eq!(get_point_on_track_at_time(&track, now, now), first_point);
         assert_eq!(get_point_on_track_at_time(&track, now + TimeDelta::milliseconds(3 * 60 * 1000), now), second_point);
@@ -140,11 +146,33 @@ mod tests {
         assert_eq!(get_point_on_track_at_time(&track, now + TimeDelta::milliseconds(999 * 6 * 60 * 1000), now), first_point);
 
         let in_between = get_point_on_track_at_time(&track, now + TimeDelta::milliseconds(90 * 1000), now);
-        assert!(in_between.x() > second_point.x());
-        assert!(in_between.x() < first_point.x());
+        assert!(in_between.x() < second_point.x());
+        assert!(in_between.x() > first_point.x());
 
-        assert!(in_between.y() < second_point.y());
-        assert!(in_between.y() > first_point.y());
+        assert!(in_between.y() > second_point.y());
+        assert!(in_between.y() < first_point.y());
+    }
+
+    #[test]
+    fn test_bearing() {
+        let mid = Point::new(14., 50.);
+        let n = Point::new(14., 51.);
+        let w = Point::new(13., 50.);
+        let s = Point::new(14., 49.);
+        let e = Point::new(15., 50.);
+
+        assert!(f64::abs(mid.haversine_bearing(n) - 0.) < 1.);
+        assert!(f64::abs(mid.haversine_bearing(w) - -90.) < 1.);
+        assert!(f64::abs(mid.haversine_bearing(s) - 180.) < 1.);
+        assert!(f64::abs(mid.haversine_bearing(e) - 90.) < 1.);
+    }
+
+    #[test]
+    fn test_limits_of_geodesic_distance() {
+        let _tokyo = Point::new(35.689487, 139.691706);
+        let _berlin = Point::new(52.520007, 13.404954);
+        let huge_dist = _tokyo.geodesic_distance(&_berlin);
+        assert!(huge_dist.is_nan());
     }
 
     #[test]
@@ -152,10 +180,13 @@ mod tests {
         let a = Point::new(50.72431, 15.17108);
         let b = Point::new(50.061495, 14.425202);
         let close_to_b = Point::new(50.0614, 14.4252);
+        let _tokyo = Point::new(35.689487, 139.691706);
+        let _berlin = Point::new(52.520007, 13.404954);
 
         assert_eq!(get_signal_strength(a, b), 0);
         assert_eq!(get_signal_strength(a, a), 10);
         assert_eq!(get_signal_strength(b, close_to_b), 9);
+        assert_eq!(get_signal_strength(_tokyo, _berlin), 0);
     }
 
 }
