@@ -1,5 +1,5 @@
-
-const BASE_URL = "http://127.0.0.1:8080/";
+// const BASE_URL = "http://127.0.0.1:8080/"; // local
+const BASE_URL = "https://cloud-run-er-server-qushikwvbq-ew.a.run.app";
 const UPDATE_FREQUENCY = 1000;
 
 let lastKnownCoordinates = null;
