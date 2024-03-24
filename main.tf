@@ -50,7 +50,7 @@ resource "null_resource" "post_apply_trigger_to_set_base_url_of_client" {
 
   # Run post-apply script using local-exec provisioner
   provisioner "local-exec" {
-    command = "./update_base_url_of_client.sh \"$(tofu output -raw cloud_run_er_server_url)\""
+    command = "./update_base_url_of_client.sh \"${google_cloud_run_service.cloud-run-er-server.status[0].url}\""
   }
 
   depends_on = [google_cloud_run_service.cloud-run-er-server]

@@ -15,4 +15,4 @@ echo "Updating $BASE_URL in $TARGET_FILE"
 
 ESCAPED_BASE_URL=$(printf '%s\n' "$BASE_URL" | sed -e 's/[]\/$*.^[]/\\&/g')
 
-sed -i "s/^const BASE_URL \= \".*\"\;$/const BASE_URL = ${ESCAPED_BASE_URL}\;/g" "$TARGET_FILE"
+sed -i "s/^const BASE_URL \= \".*\"\;$/const BASE_URL = \"${ESCAPED_BASE_URL}\"\;/g" "$TARGET_FILE"
