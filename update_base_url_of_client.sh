@@ -2,7 +2,13 @@
 
 set -e
 
-BASE_URL=$( tofu output | cut -d" " -f 3 )
+BASE_URL="$1"
+
+if [ -z "$BASE_URL" ]; then
+    echo "No BASE_URL provided - pass it as the first argument"
+    exit 1
+fi
+
 TARGET_FILE=er-client/client.js
 
 echo "Updating $BASE_URL in $TARGET_FILE"
