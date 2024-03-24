@@ -38,7 +38,7 @@ function handleOrientation(event) {
     if (event.alpha !== null && event.alpha !== undefined) {
         const alphaDegrees = event.alpha.toFixed(2);
         const compasRotation = 360. - alphaDegrees;
-        document.getElementById("compass").setAttribute('transform', `translate(100, 100) rotate(${compasRotation})`);
+        document.getElementById("compass").setAttribute('transform', `translate(100, 100) rotate(-${compasRotation})`);
     } else {
         document.getElementById("compass").setAttribute('transform', "translate(100, 100) rotate(0)");
     }
@@ -74,7 +74,6 @@ function fetchDeviceData(latitude, longitude, successHandler, errorHandler) {
         return response.json();
     })
     .then(data => {
-        console.log(data);
         successHandler(data.bearing, data.strength);
     })
     .catch(error => {
