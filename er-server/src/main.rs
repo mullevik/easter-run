@@ -3,7 +3,7 @@ use axum::{extract::Query, response::Json, routing::get, Router};
 use chrono::{DateTime, TimeZone, Utc};
 use geo::{HaversineBearing, Point};
 use serde::{Deserialize, Serialize};
-
+use tower_http::cors::CorsLayer;
 mod track;
 use track::{build_small_track, get_point_on_track_at_time, get_signal_strength};
 
@@ -14,7 +14,7 @@ struct Coordinates {
     longitude: f64,
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize)]
 struct Signal {
     bearing: f64,
     strength: i32,
@@ -39,7 +39,7 @@ async fn main() {
        info!("SIGTERM detected - shutting down")
     };
     
-    let router = build_router();
+    let router = build_router().layer(CorsLayer::permissive());
     
     let listener = tokio::net::TcpListener::bind("0.0.0.0:8080")
         .await
@@ -50,7 +50,7 @@ async fn main() {
 
 async fn get_signal(Query(params): Query<Coordinates>) -> Json<Signal> {
     // let point = Point::new(40.7128, -74.0060); // New York City coordinates
-    let user_point = Point::new(params.latitude, params.longitude);
+    let user_point = Point::new(params.longitude, params.latitude);
 
     let reset_origin = get_reset_origin();
 
@@ -77,6 +77,7 @@ mod tests {
     async fn test_bearing_api() {
         let query = "latitude=50.72431&longitude=15.17108";  // Jablonec nad Nisou
         let actual = serde_json::from_str::<Signal>(send_request_get_body(query).await.as_str()).unwrap();
+        println!("{actual:?}");
         assert!(actual.bearing >= -180.);
         assert!(actual.bearing <= -90.);
         assert_eq!(actual.strength, 0);
