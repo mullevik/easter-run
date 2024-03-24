@@ -16,6 +16,9 @@ resource "google_cloud_run_service" "cloud-run-er-server" {
     }
   }
 
+  provisioner "local-exec" {
+    command = "./build_and_push_er_server_docker_image.sh \"${var.PROJECT_ID}\""
+  }
 }
 
 data "google_iam_policy" "noauth" {
@@ -38,4 +41,17 @@ resource "google_cloud_run_service_iam_policy" "noauth" {
 
 output "cloud_run_er_server_url" {
   value = google_cloud_run_service.cloud-run-er-server.status[0].url
+}
+
+resource "null_resource" "post_apply_trigger_to_set_base_url_of_client" {
+  triggers = {
+    apply_complete = "${timestamp()}"
+  }
+
+  # Run post-apply script using local-exec provisioner
+  provisioner "local-exec" {
+    command = "./update_base_url_of_client.sh \"${google_cloud_run_service.cloud-run-er-server.status[0].url}\""
+  }
+
+  depends_on = [google_cloud_run_service.cloud-run-er-server]
 }
