@@ -4,12 +4,14 @@
     <progress
       :value="charge"
       max="100"
-      :style="{ color: `var(--bar-color)`, backgroundColor: `var(--bar-color)` }"
+      :style="{ color: `var(--bar-color)`, backgroundColor: `${color}` }"
     />
   </div>
 </template>
 
 <script lang="ts">
+import { computed } from 'vue'
+
 export default {
   props: {
     charge: {
@@ -21,8 +23,17 @@ export default {
       default: false,
     },
   },
-  setup() {},
+  setup(props) {
+    const color = computed(() => {
+      if (props.isCharging) {
+        return '#afa'
+      }
+      return '#faa'
+    })
+
+    return {
+      color,
+    }
+  },
 }
 </script>
-
-<style></style>

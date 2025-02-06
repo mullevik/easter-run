@@ -2,12 +2,14 @@
   <header>Header</header>
 
   <main>
-    <ChargeBar :charge="30" />
+    <ChargeBar :charge="30" :isCharging="false" />
+    <CompassDevice :bearing="45" />
   </main>
 </template>
 
 <script setup lang="ts">
 import ChargeBar from './components/ChargeBar.vue'
+import CompassDevice from './components/CompassDevice.vue'
 // import { useChargeStore } from './stores/charge'
 </script>
 
