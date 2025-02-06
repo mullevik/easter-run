@@ -1,26 +1,28 @@
 <template>
   <div class="container">
-    <p>Charge: {{ chargeStore.charge }}</p>
-    <button class="button" @click="add">+</button>
-    <button class="button" @click="remove">-</button>
+    <p>Charge:</p>
+    <progress
+      :value="charge"
+      max="100"
+      :style="{ color: `var(--bar-color)`, backgroundColor: `var(--bar-color)` }"
+    />
   </div>
 </template>
 
 <script lang="ts">
-import { useChargeStore } from '../stores/charge'
-
 export default {
-  setup() {
-    const chargeStore = useChargeStore()
-
-    const add = () => chargeStore.addCharge()
-    const remove = () => chargeStore.removeCharge()
-
-    return {
-      chargeStore,
-      add,
-      remove,
-    }
+  props: {
+    charge: {
+      type: Number,
+      default: 0,
+    },
+    isCharging: {
+      type: Boolean,
+      default: false,
+    },
   },
+  setup() {},
 }
 </script>
+
+<style></style>

@@ -1,14 +1,15 @@
-<script setup lang="ts">
-import ChargeBar from './components/ChargeBar.vue'
-</script>
-
 <template>
   <header>Header</header>
 
   <main>
-    <ChargeBar />
+    <ChargeBar :charge="30" />
   </main>
 </template>
+
+<script setup lang="ts">
+import ChargeBar from './components/ChargeBar.vue'
+// import { useChargeStore } from './stores/charge'
+</script>
 
 <style scoped>
 header {
