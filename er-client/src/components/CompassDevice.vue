@@ -37,6 +37,10 @@ export default {
   setup() {
     const rotation = ref(0)
 
+    const setRotation = (rot: number) => {
+      rotation.value = rot
+    }
+
     const handleOrientation = (event: DeviceOrientationEvent) => {
       console.log('orientation event')
       console.log(event)
@@ -63,6 +67,7 @@ export default {
 
     return {
       rotation,
+      setRotation,
     }
   },
 }
