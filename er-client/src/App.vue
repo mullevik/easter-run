@@ -2,15 +2,52 @@
   <header>Header</header>
 
   <main>
+    <CompassDevice :bearing="mHeading" />
+    <SignalStrengthBar :signalStrength="mSignalStrength" />
     <ChargeBar :charge="30" :isCharging="false" />
-    <CompassDevice :bearing="45" />
   </main>
 </template>
 
-<script setup lang="ts">
+<script lang="ts">
 import ChargeBar from './components/ChargeBar.vue'
+import SignalStrengthBar from './components/SignalStrengthBar.vue'
 import CompassDevice from './components/CompassDevice.vue'
-// import { useChargeStore } from './stores/charge'
+
+import { defineComponent, ref } from 'vue'
+import { headingTo, normalizeHeading } from 'geolocation-utils'
+import { signalStrength } from './track'
+
+export default defineComponent({
+  components: {
+    ChargeBar,
+    SignalStrengthBar,
+    CompassDevice,
+  },
+  setup() {
+    const mSignalStrength = ref(0)
+    const mHeading = ref(0)
+
+    if (navigator.geolocation) {
+      navigator.geolocation.watchPosition(
+        (position) => {
+          const devicePosition = { lat: position.coords.latitude, lon: position.coords.longitude }
+          const GOAL = { lat: 50.061495, lon: 14.425202 } // Prague: near Vysehrad // todo: real location here
+          mSignalStrength.value = signalStrength(devicePosition, GOAL)
+          mHeading.value = normalizeHeading(headingTo(devicePosition, GOAL))
+          console.log(devicePosition, mHeading.value)
+        },
+        (error) => {
+          console.error('Error getting location:', error)
+        },
+        { enableHighAccuracy: true, timeout: 5000 },
+      )
+    } else {
+      console.error('Geolocation is not supported by this browser.')
+    }
+
+    return { mSignalStrength, mHeading }
+  },
+})
 </script>
 
 <style scoped>
