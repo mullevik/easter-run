@@ -1,0 +1,30 @@
+name: Test client
+
+on:
+  push:
+    branches: 
+    - main
+    paths:
+    - 'er-client/**'
+  pull_request:
+    branches: 
+    - main
+    paths:
+    - 'er-client/**'
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout
+      uses: actions/checkout@v3
+
+    - name: Install dependencies
+      run: npm ci
+      working-directory: er-client
+
+    - name: Unit tests 
+      run: npm run unit-test
+      working-directory: er-client
+
