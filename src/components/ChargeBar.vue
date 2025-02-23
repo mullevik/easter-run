@@ -1,11 +1,7 @@
 <template>
   <div class="container">
-    <p>Charge:</p>
-    <progress
-      :value="charge"
-      max="100"
-      :style="{ color: `var(--bar-color)`, backgroundColor: `${color}` }"
-    />
+    <p>Charge: {{ charge }}/100</p>
+    <progress :value="charge" max="100" :style="{ backgroundColor: `${color}` }" />
   </div>
 </template>
 

@@ -1,17 +1,7 @@
 import { expect, test } from 'vitest'
-import { interpolate, signalStrength, Track } from './track'
+import { interpolate, signalStrength } from './track'
 import { moveTo } from 'geolocation-utils'
-
-const POINT_A = { lat: 50.061495, lon: 14.425202 } // Prague: near Vysehrad
-const POINT_B = { lat: 50.058621, lon: 14.431561 } // Prague: near Prazskeho Povstani
-
-const SMALL_TRACK = new Track(
-  [
-    { position: POINT_A, timeToReachNext: 60 },
-    { position: POINT_B, timeToReachNext: 60 },
-  ],
-  new Date(1739612690546),
-)
+import { POINT_A, POINT_B, SMALL_TRACK } from './scenarios'
 
 test('signal strength decreases with time when stationary', () => {
   const beginDate = SMALL_TRACK.getBeginDate()
