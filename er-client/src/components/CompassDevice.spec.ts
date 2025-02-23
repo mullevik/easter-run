@@ -17,7 +17,7 @@ test('points to north on default', () => {
 
 test('set rotation works', () => {
   const wrapper = mount(CompassDevice)
-  wrapper.vm.setRotation(30)
+  wrapper.vm.rotation = 30
   expect(wrapper.vm.rotation).toBe(30)
 })
 

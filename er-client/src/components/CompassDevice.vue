@@ -15,35 +15,34 @@
       <text x="0" y="-65" text-anchor="middle" font-family="Arial" font-size="24" fill="black">
         N
       </text>
-      <g id="needle" :transform="`rotate(${bearing})`">
+      <g v-if="bearing !== null" id="needle" :transform="`rotate(${bearing})`">
         <!-- Compass needle -->
         <polygon points="0,15 -10,5 0,-80 10,5" fill="#ab0202" />
       </g>
+      <g v-else id="needle" class="rotate-animation">
+        <!-- Compass needle spinning because of unknown bearing -->
+        <polygon points="0,15 -10,5 0,-80 10,5" fill="#ab0202" />
+      </g>
+      
     </g>
   </svg>
 </template>
 
 <script lang="ts">
-import { onMounted, onBeforeUnmount, ref } from 'vue'
+import { onMounted, onBeforeUnmount, ref} from 'vue'
 
 export default {
   props: {
     bearing: {
-      type: Number,
-      default: 0,
+      type: [Number, null],
+      default: null,
     },
   },
 
   setup() {
     const rotation = ref(0)
 
-    const setRotation = (rot: number) => {
-      rotation.value = rot
-    }
-
     const handleOrientation = (event: DeviceOrientationEvent) => {
-      console.log('orientation event')
-      console.log(event)
       if (event.alpha !== null && event.alpha !== undefined) {
         rotation.value = 360 - event.alpha
       } else {
@@ -56,19 +55,38 @@ export default {
         console.error('Device orientation not supported')
       } else {
         window.addEventListener('deviceorientation', handleOrientation)
-        console.log('Orientation handling mounted')
+        console.debug('Orientation handling mounted')
       }
     })
 
     onBeforeUnmount(() => {
       window.removeEventListener('deviceorientation', handleOrientation)
-      console.log('Orientation handling unmounted')
+ 
+      console.debug('Orientation handling unmounted')
     })
 
     return {
       rotation,
-      setRotation,
     }
   },
 }
 </script>
+
+<style>
+#needle {
+  transition: transform 250ms
+}
+
+.rotate-animation {
+  animation: rotate 500ms linear infinite;
+}
+
+@keyframes rotate {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+</style>
