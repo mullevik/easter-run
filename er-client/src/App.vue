@@ -4,19 +4,23 @@
   <main>
     <CompassDevice :bearing="mHeading" />
     <SignalStrengthBar :signalStrength="mSignalStrength" />
-    <ChargeBar :charge="30" :isCharging="false" />
+    <ChargeBar :charge="chargeStore.charge" />
   </main>
 </template>
 
 <script lang="ts">
 import ChargeBar from './components/ChargeBar.vue'
-import SignalStrengthBar from './components/SignalStrengthBar.vue'
+import SignalStrengthBar, { REQUIRED_SIGNAL_STRENGTH } from './components/SignalStrengthBar.vue'
 import CompassDevice from './components/CompassDevice.vue'
 
-import { defineComponent, ref } from 'vue'
+import { defineComponent, ref, onMounted, onBeforeUnmount } from 'vue'
 import { headingTo, normalizeHeading } from 'geolocation-utils'
 import { signalStrength } from './track'
 import { SMALL_TRACK } from './scenarios'
+import { useChargeStore } from './state'
+
+type milliseconds = number
+const CHARGE_UPDATE_INTERVAL: milliseconds = 1000
 
 export default defineComponent({
   components: {
@@ -27,6 +31,29 @@ export default defineComponent({
   setup() {
     const mSignalStrength = ref(0)
     const mHeading = ref(0)
+    const chargeStore = useChargeStore()
+
+    let timer: NodeJS.Timeout | null = null
+
+    onMounted(() => {
+      timer = setInterval(() => {
+        const prevCharge = chargeStore.charge
+        if (mSignalStrength.value >= REQUIRED_SIGNAL_STRENGTH) {
+          chargeStore.addCharge()
+        } else {
+          chargeStore.decreaseCharge()
+        }
+        const nextCharge = chargeStore.charge
+
+        console.debug(`Charge: ${prevCharge} -> ${nextCharge}`)
+      }, CHARGE_UPDATE_INTERVAL)
+    })
+
+    onBeforeUnmount(() => {
+      if (timer) {
+        clearInterval(timer)
+      }
+    })
 
     if (navigator.geolocation) {
       navigator.geolocation.watchPosition(
@@ -35,7 +62,9 @@ export default defineComponent({
           const goal = SMALL_TRACK.targetAt(new Date()) // temporary use of the small track scenario
           mSignalStrength.value = signalStrength(devicePosition, goal)
           mHeading.value = normalizeHeading(headingTo(devicePosition, goal))
-          console.log(devicePosition, mHeading.value)
+          console.debug(`Device position: ${devicePosition}`)
+          console.debug(`Signal strength: ${mSignalStrength.value}`)
+          console.debug(`Heading: ${mHeading.value}`)
         },
         (error) => {
           console.error('Error getting location:', error)
@@ -46,7 +75,7 @@ export default defineComponent({
       console.error('Geolocation is not supported by this browser.')
     }
 
-    return { mSignalStrength, mHeading }
+    return { mSignalStrength, mHeading, chargeStore }
   },
 })
 </script>

@@ -3,7 +3,7 @@
     <p>
       Signal strength:
       <span v-if="signalStrength == 0">no signal</span>
-      <span v-else-if="signalStrength < 50">weak</span>
+      <span v-else-if="signalStrength < REQUIRED_SIGNAL_STRENGTH">weak</span>
       <span v-else>good</span>
     </p>
     <progress :value="signalStrength" max="100" />
@@ -12,6 +12,7 @@
 
 <script lang="ts">
 import { computed } from 'vue'
+export const REQUIRED_SIGNAL_STRENGTH: number = 75
 
 export default {
   props: {
@@ -25,6 +26,7 @@ export default {
 
     return {
       isCloseEnough,
+      REQUIRED_SIGNAL_STRENGTH,
     }
   },
 }
