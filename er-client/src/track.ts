@@ -4,6 +4,7 @@ const MAX_DST_METERS = 100
 
 type Seconds = number
 type Milliseconds = number
+type Meters = number
 
 export interface TrackPoint {
   position: LatLon
@@ -53,13 +54,11 @@ export class Track {
   }
 }
 
-export function signalStrength(from: LatLon, to: LatLon): number {
-  const dst = distanceTo(from, to)
-
-  if (dst > MAX_DST_METERS) {
+export function signalStrength(distance: Meters): number {
+  if (distance > MAX_DST_METERS) {
     return 0
   }
-  return Math.round(MAX_DST_METERS - dst)
+  return Math.round(MAX_DST_METERS - distance)
 }
 
 export function interpolate(a: LatLon, b: LatLon, percentFromAToB: number) {

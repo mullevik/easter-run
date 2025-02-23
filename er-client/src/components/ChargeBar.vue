@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <p> Charge: {{ charge }}/100 <span v-if="isCharging && charge < 100">▲</span><span v-else-if="isDischarging">▼</span></p>
+    <p> Charge: {{ charge }}/100 <span v-if="isCharging">▲</span><span v-else-if="isDischarging">▼</span></p>
     <progress max="100" :value="charge" />
   </div>
 </template>
@@ -22,8 +22,8 @@ export default {
     
 
     watch(charge, (newVal, oldVal) => {
-        isCharging.value = newVal > oldVal
-        isDischarging.value = newVal < oldVal
+        isCharging.value = newVal > oldVal && newVal < 100
+        isDischarging.value = newVal < oldVal && newVal > 0
       }
     )
 

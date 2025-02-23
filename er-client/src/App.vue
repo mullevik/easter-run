@@ -13,8 +13,8 @@ import ChargeBar from './components/ChargeBar.vue'
 import SignalStrengthBar, { REQUIRED_SIGNAL_STRENGTH } from './components/SignalStrengthBar.vue'
 import CompassDevice from './components/CompassDevice.vue'
 
-import { defineComponent, ref, onMounted, onBeforeUnmount } from 'vue'
-import { headingTo, normalizeHeading } from 'geolocation-utils'
+import { defineComponent, ref, onMounted, onBeforeUnmount, type Ref } from 'vue'
+import { headingDistanceTo, normalizeHeading, type LatLon } from 'geolocation-utils'
 import { signalStrength } from './track'
 import { SMALL_TRACK } from './scenarios'
 import { useChargeStore } from './state'
@@ -30,23 +30,15 @@ export default defineComponent({
   },
   setup() {
     const mSignalStrength = ref(0)
-    const mHeading = ref(0)
+    const mHeading: Ref<number | null> = ref(null)
     const chargeStore = useChargeStore()
+
+    let lastDevicePosition: LatLon | null = null
 
     let timer: NodeJS.Timeout | null = null
 
     onMounted(() => {
-      timer = setInterval(() => {
-        const prevCharge = chargeStore.charge
-        if (mSignalStrength.value >= REQUIRED_SIGNAL_STRENGTH) {
-          chargeStore.addCharge()
-        } else {
-          chargeStore.decreaseCharge()
-        }
-        const nextCharge = chargeStore.charge
-
-        console.debug(`Charge: ${prevCharge} -> ${nextCharge}`)
-      }, CHARGE_UPDATE_INTERVAL)
+      timer = setInterval(onGameTick, CHARGE_UPDATE_INTERVAL)
     })
 
     onBeforeUnmount(() => {
@@ -55,19 +47,39 @@ export default defineComponent({
       }
     })
 
+    const onGameTick = () => {
+      if (mSignalStrength.value >= REQUIRED_SIGNAL_STRENGTH) {
+        chargeStore.addCharge()
+      } else {
+        chargeStore.decreaseCharge()
+      }
+      console.debug(`Charge: ${chargeStore.charge}`)
+
+      if (lastDevicePosition) {
+        const goal = SMALL_TRACK.targetAt(new Date()) // temporary use of the small track scenario
+        const headingDistance = headingDistanceTo(lastDevicePosition, goal)
+        console.debug(`Last device position: ${lastDevicePosition}`)
+        console.debug(`Signal strength: ${mSignalStrength.value}`)
+        console.debug(`Heading: ${mHeading.value}`)
+        mSignalStrength.value = signalStrength(headingDistance.distance)
+        mHeading.value = normalizeHeading(headingDistance.heading)
+      } else {
+        console.debug(`No last device position => resetting`)
+
+        mHeading.value = null
+        mSignalStrength.value = 0
+      }
+    }
+
     if (navigator.geolocation) {
       navigator.geolocation.watchPosition(
         (position) => {
-          const devicePosition = { lat: position.coords.latitude, lon: position.coords.longitude }
-          const goal = SMALL_TRACK.targetAt(new Date()) // temporary use of the small track scenario
-          mSignalStrength.value = signalStrength(devicePosition, goal)
-          mHeading.value = normalizeHeading(headingTo(devicePosition, goal))
-          console.debug(`Device position: ${devicePosition}`)
-          console.debug(`Signal strength: ${mSignalStrength.value}`)
-          console.debug(`Heading: ${mHeading.value}`)
+          lastDevicePosition = { lat: position.coords.latitude, lon: position.coords.longitude }
+          console.debug(`New position update: ${lastDevicePosition}`)
         },
         (error) => {
-          console.error('Error getting location:', error)
+          console.error('Error getting location (resetting device location):', error)
+          lastDevicePosition = null
         },
         { enableHighAccuracy: true, timeout: 5000 },
       )
