@@ -32,6 +32,10 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Install dependencies
+        run: npm ci
+        working-directory: er-client
+      
       - name: Test
         run: npm run unit-test
         working-directory: er-client
