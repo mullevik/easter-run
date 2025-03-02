@@ -1,5 +1,5 @@
 <template>
-  <header>Header</header>
+  <header>Bunny detector 3000</header>
 
   <main>
     <CompassDevice :bearing="mHeading" />
