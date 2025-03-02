@@ -1,4 +1,4 @@
-import { distanceTo, headingDistanceTo, moveTo, type LatLon } from 'geolocation-utils'
+import { headingDistanceTo, moveTo, type LatLon } from 'geolocation-utils'
 
 const MAX_DST_METERS = 100
 
