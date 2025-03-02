@@ -59,5 +59,5 @@ test('points to north even with device orientation', () => {
   window.dispatchEvent(new mockDeviceOrientationEvent())
 
   // Check that the component has updated with the new values
-  expect(wrapper.vm.rotation).toBe(315)
+  expect(wrapper.vm.rotation).toBe(360 + 45)
 })

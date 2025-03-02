@@ -23,13 +23,12 @@
         <!-- Compass needle spinning because of unknown bearing -->
         <polygon points="0,15 -10,5 0,-80 10,5" fill="#ab0202" />
       </g>
-      
     </g>
   </svg>
 </template>
 
 <script lang="ts">
-import { onMounted, onBeforeUnmount, ref} from 'vue'
+import { onMounted, onBeforeUnmount, ref } from 'vue'
 
 export default {
   props: {
@@ -44,7 +43,7 @@ export default {
 
     const handleOrientation = (event: DeviceOrientationEvent) => {
       if (event.alpha !== null && event.alpha !== undefined) {
-        rotation.value = 360 - event.alpha
+        rotation.value = 360 + event.alpha
       } else {
         rotation.value = 0
       }
@@ -61,7 +60,7 @@ export default {
 
     onBeforeUnmount(() => {
       window.removeEventListener('deviceorientation', handleOrientation)
- 
+
       console.debug('Orientation handling unmounted')
     })
 
@@ -74,7 +73,7 @@ export default {
 
 <style>
 #needle {
-  transition: transform 250ms
+  transition: transform 250ms;
 }
 
 .rotate-animation {
