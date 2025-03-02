@@ -28,3 +28,7 @@ jobs:
       run: npm run unit-test
       working-directory: er-client
 
+    - name: Lint
+      run: npm run lint
+      working-directory: er-client
+
