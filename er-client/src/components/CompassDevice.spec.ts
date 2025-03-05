@@ -1,7 +1,7 @@
-import { expect, test, vi } from 'vitest'
 import { mount } from '@vue/test-utils'
-import CompassDevice from './CompassDevice.vue'
 import assert from 'assert'
+import { expect, test, vi } from 'vitest'
+import CompassDevice from './CompassDevice.vue'
 
 test('points to north on default', () => {
   const wrapper = mount(CompassDevice)
@@ -11,7 +11,7 @@ test('points to north on default', () => {
   console.log(compassElement)
 
   const transformValue = compassElement.element.getAttribute('transform')
-  const rotateMatch = transformValue?.match(/rotate\((\d+)\)/)
+  const rotateMatch = transformValue?.match(/rotate\((\-?\d+) deg\)/)
   assert(rotateMatch)
   expect(rotateMatch[1]).toBe('0')
 })
@@ -44,7 +44,7 @@ test('points to north even with device orientation', () => {
   window.DeviceOrientationEvent = vi.fn()
 
   const mockDeviceOrientationEvent = vi.fn(() => {
-    const event = new DeviceOrientationEvent('deviceorientation', {
+    const event = new DeviceOrientationEvent('deviceorientationabsolute', {
       alpha: 45,
       beta: 0,
       gamma: 0,
@@ -59,5 +59,11 @@ test('points to north even with device orientation', () => {
   window.dispatchEvent(new mockDeviceOrientationEvent())
 
   // Check that the component has updated with the new values
-  expect(wrapper.vm.rotation).toBe(360 + 45)
+  expect(wrapper.vm.rotation).toBe(360 - 45)
+})
+
+test('points to north even with device orientation on IOS', () => {
+  // TODO: mock iOS stuff
+  // Check that the component has updated with the new values
+  // expect(wrapper.vm.rotation).toBe(360 - 45)
 })

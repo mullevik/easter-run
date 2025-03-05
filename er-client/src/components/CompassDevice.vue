@@ -1,6 +1,6 @@
 <template>
   <svg width="100%" height="200" viewBox="0 0 200 200">
-    <g id="compass" :transform="`translate(100, 100) rotate(${rotation})`">
+    <g id="compass" :transform="`translate(100, 100) rotate(${-rotation} deg)`">
       <!-- Circle stroke -->
       <circle
         cx="0"
@@ -42,24 +42,47 @@ export default {
     const rotation = ref(0)
 
     const handleOrientation = (event: DeviceOrientationEvent) => {
-      if (event.alpha !== null && event.alpha !== undefined) {
-        rotation.value = 360 + event.alpha
-      } else {
-        rotation.value = 0
-      }
+      console.error(`webkit heading ${event.webkitCompassHeading}`)
+      console.error(`alpha ${event.alpha}`)
+      const rot = event.webkitCompassHeading || Math.abs(event.alpha - 360)
+      console.error(`rot ${rot}`)
+      rotation.value = rot
     }
 
     onMounted(() => {
-      if (!window.DeviceOrientationEvent) {
-        console.error('Device orientation not supported')
+      const isIOS =
+        navigator.userAgent.match(/(iPod|iPhone|iPad)/) && navigator.userAgent.match(/AppleWebKit/)
+
+      if (isIOS) {
+        if (
+          window.DeviceOrientationEvent &&
+          typeof window.DeviceOrientationEvent.requestPermission === 'function'
+        ) {
+          window.DeviceOrientationEvent.requestPermission()
+            .then((response) => {
+              if (response === 'granted') {
+                window.addEventListener('deviceorientation', handleOrientation, true)
+              } else {
+                console.error('IOS device orientation was not granted')
+              }
+            })
+            .catch(() => console.error('IOS device orientation unavailable'))
+        } else {
+          console.error('IOS device orientation unavailable')
+        }
       } else {
-        window.addEventListener('deviceorientation', handleOrientation)
-        console.debug('Orientation handling mounted')
+        if (!window.DeviceOrientationEvent) {
+          console.error('Device orientation not supported')
+        } else {
+          window.addEventListener('deviceorientationabsolute', handleOrientation)
+          console.debug('Orientation handling mounted')
+        }
       }
     })
 
     onBeforeUnmount(() => {
       window.removeEventListener('deviceorientation', handleOrientation)
+      window.removeEventListener('deviceorientationabsolute', handleOrientation)
 
       console.debug('Orientation handling unmounted')
     })
