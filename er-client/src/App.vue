@@ -1,6 +1,11 @@
 <template>
-  <header>Bunny detector 3000</header>
-
+  <header>
+    <h1>Tesser-grab 3000</h1>
+    <br />
+    <div class="buttons">
+      <HelpModal></HelpModal>
+    </div>
+  </header>
   <main>
     <CompassDevice :bearing="mHeading" />
     <SignalStrengthBar :signalStrength="mSignalStrength" />
@@ -10,6 +15,7 @@
 
 <script lang="ts">
 import ChargeBar from './components/ChargeBar.vue'
+import HelpModal from './components/HelpModal.vue'
 import SignalStrengthBar, { REQUIRED_SIGNAL_STRENGTH } from './components/SignalStrengthBar.vue'
 import CompassDevice from './components/CompassDevice.vue'
 
@@ -25,6 +31,7 @@ const CHARGE_UPDATE_INTERVAL: milliseconds = 1000
 export default defineComponent({
   components: {
     ChargeBar,
+    HelpModal,
     SignalStrengthBar,
     CompassDevice,
   },
@@ -100,6 +107,10 @@ header {
 .logo {
   display: block;
   margin: 0 auto 2rem;
+}
+
+.buttons {
+  font-size: small;
 }
 
 @media (min-width: 1024px) {
