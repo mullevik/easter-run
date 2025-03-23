@@ -3,6 +3,10 @@
 
   <Teleport to="body">
     <div v-if="open" class="modal">
+      <div style="text-align: right">
+        <button @click="open = false">Close</button>
+      </div>
+
       <h3>Tesser-grab 3000</h3>
       <p>Track down and capture high-dimensional bunnies using ordinary smartphone.</p>
 
@@ -41,7 +45,7 @@
       </p>
       <p>
         To charge the device, position your self near the target high-dimensional being. The signal
-        strength must be above 50 % to gain charge. When the signal strength is below 50 %, the
+        strength must be above 75 % to gain charge. When the signal strength is below 75 %, the
         device loses charge over time.
       </p>
       <p>
@@ -49,7 +53,9 @@
         automatically.
       </p>
 
-      <button @click="open = false">Close</button>
+      <div style="text-align: right">
+        <button @click="open = false">Close</button>
+      </div>
     </div>
   </Teleport>
 </template>
@@ -62,6 +68,7 @@ const open = ref(false)
 
 <style scoped>
 .modal {
+  box-sizing: border-box;
   position: fixed;
   z-index: 999;
   top: 0;

@@ -47,7 +47,7 @@ export default {
       // cast to any because DeviceOrientationEvent has .webkitCompassHeading only on iOS
       /* eslint-disable  @typescript-eslint/no-explicit-any */
       const webkitHeading: number | null = (event as any).webkitCompassHeading
-      const rot = webkitHeading || Math.abs(alpha - 360)
+      const rot = - (webkitHeading || Math.abs(alpha - 360))
       console.debug(
         `alpha=${alpha}, webkit_heading=${webkitHeading}, rot=${rot}, absolute=${event.absolute}`,
       )
