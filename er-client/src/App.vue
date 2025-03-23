@@ -4,6 +4,7 @@
     <br />
     <div class="buttons">
       <HelpModal></HelpModal>
+      <DebugModal></DebugModal>
     </div>
   </header>
   <main>
@@ -16,6 +17,7 @@
 <script lang="ts">
 import ChargeBar from './components/ChargeBar.vue'
 import HelpModal from './components/HelpModal.vue'
+import DebugModal from './components/DebugModal.vue'
 import SignalStrengthBar, { REQUIRED_SIGNAL_STRENGTH } from './components/SignalStrengthBar.vue'
 import CompassDevice from './components/CompassDevice.vue'
 
@@ -32,6 +34,7 @@ export default defineComponent({
   components: {
     ChargeBar,
     HelpModal,
+    DebugModal,
     SignalStrengthBar,
     CompassDevice,
   },
@@ -111,23 +114,5 @@ header {
 
 .buttons {
   font-size: small;
-}
-
-@media (min-width: 1024px) {
-  header {
-    display: flex;
-    place-items: center;
-    padding-right: calc(var(--section-gap) / 2);
-  }
-
-  .logo {
-    margin: 0 2rem 0 0;
-  }
-
-  header .wrapper {
-    display: flex;
-    place-items: flex-start;
-    flex-wrap: wrap;
-  }
 }
 </style>
