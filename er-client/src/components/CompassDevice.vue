@@ -42,25 +42,35 @@ export default {
     const rotation = ref(0)
 
     const handleOrientation = (event: DeviceOrientationEvent) => {
-      console.error(`webkit heading ${event.webkitCompassHeading}`)
-      console.error(`alpha ${event.alpha}`)
-      const rot = event.webkitCompassHeading || Math.abs(event.alpha - 360)
-      console.error(`rot ${rot}`)
+      const alpha: number = event.alpha || 0
+      // cast to any because DeviceOrientationEvent has .webkitCompassHeading only on iOS
+      /* eslint-disable  @typescript-eslint/no-explicit-any */
+      const webkitHeading: number | null = (event as any).webkitCompassHeading
+      const rot = webkitHeading || Math.abs(alpha - 360)
+      console.debug(
+        `alpha=${alpha}, webkit_heading=${webkitHeading}, rot=${rot}, absolute=${event.absolute}`,
+      )
       rotation.value = rot
     }
 
     onMounted(() => {
       const isIOS =
-        navigator.userAgent.match(/(iPod|iPhone|iPad)/) && navigator.userAgent.match(/AppleWebKit/)
+        window.navigator.userAgent.match(/(iPod|iPhone|iPad)/) &&
+        navigator.userAgent.match(/AppleWebKit/)
 
       if (isIOS) {
+        // cast to any because DeviceOrientationEvent has .requestPermission only on iOS
+        /* eslint-disable  @typescript-eslint/no-explicit-any */
         if (
           window.DeviceOrientationEvent &&
-          typeof window.DeviceOrientationEvent.requestPermission === 'function'
+          typeof (window.DeviceOrientationEvent as any).requestPermission === 'function'
         ) {
-          window.DeviceOrientationEvent.requestPermission()
-            .then((response) => {
+          /* eslint-disable  @typescript-eslint/no-explicit-any */
+          ;(window.DeviceOrientationEvent as any)
+            .requestPermission()
+            .then((response: string) => {
               if (response === 'granted') {
+                console.error('permission granted')
                 window.addEventListener('deviceorientation', handleOrientation, true)
               } else {
                 console.error('IOS device orientation was not granted')
