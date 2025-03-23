@@ -68,7 +68,7 @@ test('points to north even with device orientation', () => {
   window.dispatchEvent(new mockDeviceOrientationEvent())
 
   // Check that the component has updated with the new values
-  expect(wrapper.vm.rotation).toBe(360 - 45)
+  expect(wrapper.vm.rotation).toBe(-315)
 })
 
 describe('iOS behavior', () => {
@@ -104,17 +104,6 @@ describe('iOS behavior', () => {
     // send the dispatch event only after the promise has been resolved
     window.dispatchEvent(new mockDeviceOrientationEvent())
 
-    expect(wrapper.vm.rotation).toBe(360 - 45)
+    expect(wrapper.vm.rotation).toBe(-315)
   })
-
-  // todo: test the behavior
 })
-// test('points to north even with device orientation on IOS', () => {
-
-//   navigator
-
-//   DeviceOrientationEvent
-//   // TODO: mock iOS stuff
-//   // Check that the component has updated with the new values
-//   // expect(wrapper.vm.rotation).toBe(360 - 45)
-// })

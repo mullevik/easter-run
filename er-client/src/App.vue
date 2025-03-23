@@ -1,7 +1,6 @@
 <template>
   <header>
     <h1>Tesser-grab 3000</h1>
-    <br />
     <div class="buttons">
       <HelpModal></HelpModal>
       <DebugModal></DebugModal>
@@ -103,15 +102,6 @@ export default defineComponent({
 </script>
 
 <style scoped>
-header {
-  line-height: 1.5;
-}
-
-.logo {
-  display: block;
-  margin: 0 auto 2rem;
-}
-
 .buttons {
   font-size: small;
 }

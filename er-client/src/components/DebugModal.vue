@@ -3,10 +3,12 @@
 
   <Teleport to="body">
     <div v-if="open" class="modal">
+      <div style="text-align: right">
+        <button @click="open = false">Close</button>
+      </div>
       <p>UserAgent: {{ userAgent }}</p>
       <p>Last event: {{ lastEventJSON }}</p>
       <p>Last update at: {{ lastUpdateTime }}</p>
-      <button @click="open = false">Close</button>
     </div>
   </Teleport>
 </template>
@@ -16,7 +18,16 @@ import { cleanOrientation, setupOrientation } from '@/orientation'
 import { onBeforeUnmount, onMounted, ref } from 'vue'
 
 const handleOrientation = (event: DeviceOrientationEvent) => {
-  lastEventJSON.value = JSON.stringify(event)
+  const customEvent = {
+    alpha: event.alpha,
+    beta: event.beta,
+    gamma: event.gamma,
+    absolute: event.absolute,
+    /* eslint-disable  @typescript-eslint/no-explicit-any */
+    webkitCompassHeading: (event as any).webkitCompassHeading,
+  }
+  lastEventJSON.value = JSON.stringify(customEvent)
+
   lastUpdateTime.value = new Date().toLocaleTimeString()
 }
 onMounted(() => {
@@ -35,6 +46,7 @@ const lastUpdateTime = ref('no data')
 
 <style scoped>
 .modal {
+  box-sizing: border-box;
   position: fixed;
   z-index: 999;
   top: 0;
