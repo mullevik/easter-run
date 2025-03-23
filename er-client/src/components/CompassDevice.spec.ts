@@ -11,7 +11,7 @@ test('points to north on default', () => {
   console.log(compassElement)
 
   const transformValue = compassElement.element.getAttribute('transform')
-  const rotateMatch = transformValue?.match(/rotate\((\-?\d+) deg\)/)
+  const rotateMatch = transformValue?.match(/rotate\((\-?\d+)\)/)
   assert(rotateMatch)
   expect(rotateMatch[1]).toBe('0')
 })
@@ -83,7 +83,7 @@ describe('iOS behavior', () => {
   it('should point to north on deviceorientation', async () => {
     window.DeviceOrientationEvent = vi.fn()
     /* eslint-disable  @typescript-eslint/no-explicit-any */
-    ;(window.DeviceOrientationEvent as any).requestPermission = vi.fn().mockResolvedValue('granted')  
+    ;(window.DeviceOrientationEvent as any).requestPermission = vi.fn().mockResolvedValue('granted')
 
     const mockDeviceOrientationEvent = vi.fn(() => {
       const event = new DeviceOrientationEvent('deviceorientation', {
