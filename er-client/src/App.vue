@@ -4,6 +4,7 @@
     <div class="buttons">
       <HelpModal></HelpModal>
       <DebugModal></DebugModal>
+      <CapturedModal></CapturedModal>
     </div>
   </header>
   <main>
@@ -17,6 +18,7 @@
 import ChargeBar from './components/ChargeBar.vue'
 import HelpModal from './components/HelpModal.vue'
 import DebugModal from './components/DebugModal.vue'
+import CapturedModal from './components/CapturedModal.vue'
 import SignalStrengthBar, { REQUIRED_SIGNAL_STRENGTH } from './components/SignalStrengthBar.vue'
 import CompassDevice from './components/CompassDevice.vue'
 
@@ -36,6 +38,7 @@ export default defineComponent({
     DebugModal,
     SignalStrengthBar,
     CompassDevice,
+    CapturedModal,
   },
   setup() {
     const mSignalStrength = ref(0)

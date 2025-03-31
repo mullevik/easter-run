@@ -1,7 +1,7 @@
 <template>
   <div class="container">
     <p>
-      Charge: {{ charge }}/100
+      Charge: {{ `${Math.floor(charge)}` }}/100
       <!-- <span v-if="isCharging">▲</span>
       <span v-else-if="isDischarging">▼</span> -->
     </p>
