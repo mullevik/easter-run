@@ -1,8 +1,6 @@
 <template>
   <div class="container">
-    <p>
-      Signal strength
-    </p>
+    <p>Signal strength</p>
     <progress :value="signalStrength" max="100" />
     <div class="measure-wrapper">
       <div class="measure" :style="`width: ${REQUIRED_SIGNAL_STRENGTH}%`"></div>
@@ -12,7 +10,7 @@
 
 <script lang="ts">
 import { computed } from 'vue'
-export const REQUIRED_SIGNAL_STRENGTH: number = 75
+export const REQUIRED_SIGNAL_STRENGTH: number = 50
 
 export default {
   props: {

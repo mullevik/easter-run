@@ -8,7 +8,7 @@
       </div>
 
       <h3>Tesser-grab 3000</h3>
-      <p>Track down and capture high-dimensional bunnies using ordinary smartphone.</p>
+      <p>Track down and capture high-dimensional beings using ordinary smartphone.</p>
 
       <h4>The compass</h4>
       <p>
@@ -29,13 +29,13 @@
 
       <h4>Signal strength</h4>
       <p>
-        Shows how close the user is to the high-dimensional being. The higher the value, the closer
-        the being is to the device.
+        Shows how close the user is to the high-dimensional entity. The higher the value, the closer
+        the entity is to the device.
       </p>
       <p>
-        If the user is too far from the target, the signal strength is too low to even display. The
+        If the user is too far from its target, the signal strength is too low to even display. The
         compass needle, however, should still point in the right direction to the closest
-        high-dimensional being.
+        high-dimensional entity.
       </p>
 
       <h4>Charge</h4>
@@ -45,8 +45,8 @@
       </p>
       <p>
         To charge the device, position your self near the target high-dimensional being. The signal
-        strength must be above 75 % to gain charge. When the signal strength is below 75 %, the
-        device loses charge over time.
+        strength must be above {{ REQUIRED_SIGNAL_STRENGTH }} % to gain charge. When the signal
+        strength is below {{ REQUIRED_SIGNAL_STRENGTH }} %, the device loses charge over time.
       </p>
       <p>
         Once the device is fully charged, it captures the closest high-dimensional target
@@ -62,6 +62,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
+import { REQUIRED_SIGNAL_STRENGTH } from './SignalStrengthBar.vue'
 
 const open = ref(false)
 </script>

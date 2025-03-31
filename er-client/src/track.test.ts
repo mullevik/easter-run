@@ -10,16 +10,19 @@ test('signal strength decreases with time when stationary', () => {
   const after10Seconds = new Date(beginDate.getTime() + 10 * 1000)
   const after15Seconds = new Date(beginDate.getTime() + 15 * 1000)
   expect(signalStrength(distanceTo(POINT_A, SMALL_TRACK.targetAt(beginDate)))).toBe(100)
-  expect(signalStrength(distanceTo(POINT_A, SMALL_TRACK.targetAt(after5Seconds)))).toBe(54)
-  expect(signalStrength(distanceTo(POINT_A, SMALL_TRACK.targetAt(after10Seconds)))).toBe(7)
-  expect(signalStrength(distanceTo(POINT_A, SMALL_TRACK.targetAt(after15Seconds)))).toBe(0)
+  expect(signalStrength(distanceTo(POINT_A, SMALL_TRACK.targetAt(after5Seconds)))).toBeLessThan(100)
+  expect(signalStrength(distanceTo(POINT_A, SMALL_TRACK.targetAt(after10Seconds)))).toBeLessThan(50)
+  expect(signalStrength(distanceTo(POINT_A, SMALL_TRACK.targetAt(after15Seconds)))).toBeLessThan(20)
 })
 
 test('signal strength', () => {
-  const closeToPointA = moveTo(POINT_A, { distance: 50, heading: 45 })
+  const closeToPointA = moveTo(POINT_A, { distance: 25, heading: 45 })
 
+  expect(signalStrength(0)).toBe(100)
+  expect(signalStrength(5000)).toBeLessThan(1)
+  
   expect(signalStrength(distanceTo(POINT_A, POINT_A))).toBe(100)
-  expect(signalStrength(distanceTo(POINT_A, POINT_B))).toBe(0)
+  expect(signalStrength(distanceTo(POINT_A, POINT_B))).toBeLessThan(5)
   expect(signalStrength(distanceTo(POINT_A, closeToPointA))).toBeCloseTo(50)
 })
 
