@@ -1,7 +1,5 @@
 import { headingDistanceTo, moveTo, type LatLon } from 'geolocation-utils'
 
-const MAX_DST_METERS = 100
-
 type Seconds = number
 type Milliseconds = number
 type Meters = number
@@ -54,11 +52,20 @@ export class Track {
   }
 }
 
+
+const SIGNAL_STRENGTH_M: number = 100
+const SIGNAL_STRENGTH_T: Meters = 25
+
+// Computes signal-strength based on distance to target
+//
+// Signal strength is a Non-linear function: [ m / (x/t + 1) ]
+//  where:
+//  - `m` is the maximum signal strength at distance 0
+//  - `t` is the distance at which the function reaches half of `m`
+//
+// This function converges to 0 at positive infinity. The further the distance, the lower the value.
 export function signalStrength(distance: Meters): number {
-  if (distance > MAX_DST_METERS) {
-    return 0
-  }
-  return Math.round(MAX_DST_METERS - distance)
+  return SIGNAL_STRENGTH_M / ( (distance / SIGNAL_STRENGTH_T) + 1 )
 }
 
 export function interpolate(a: LatLon, b: LatLon, percentFromAToB: number) {
