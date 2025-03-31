@@ -23,7 +23,7 @@ import SignalStrengthBar, { REQUIRED_SIGNAL_STRENGTH } from './components/Signal
 import CompassDevice from './components/CompassDevice.vue'
 
 import { defineComponent, ref, onMounted, onBeforeUnmount, type Ref } from 'vue'
-import { headingDistanceTo, normalizeHeading, type LatLon } from 'geolocation-utils'
+import { headingDistanceTo, type LatLon } from 'geolocation-utils'
 import { signalStrength } from './track'
 import { SMALL_TRACK } from './scenarios'
 import { useChargeStore } from './state'
@@ -74,7 +74,7 @@ export default defineComponent({
         console.debug(`Signal strength: ${mSignalStrength.value}`)
         console.debug(`Heading: ${mHeading.value}`)
         mSignalStrength.value = signalStrength(headingDistance.distance)
-        mHeading.value = normalizeHeading(headingDistance.heading)
+        mHeading.value = headingDistance.heading
       } else {
         console.debug(`No last device position => resetting`)
 
