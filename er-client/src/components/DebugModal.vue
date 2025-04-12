@@ -7,7 +7,8 @@
         <button @click="open = false">Close</button>
       </div>
       <p>UserAgent: {{ userAgent }}</p>
-      <p>Last event: {{ lastEventJSON }}</p>
+      <p>LastEvent:</p>
+      <pre><code>{{ lastEventJSON }}</code></pre>
       <p>Last update at: {{ lastUpdateTime }}</p>
     </div>
   </Teleport>
@@ -26,7 +27,7 @@ const handleOrientation = (event: DeviceOrientationEvent) => {
     /* eslint-disable  @typescript-eslint/no-explicit-any */
     webkitCompassHeading: (event as any).webkitCompassHeading,
   }
-  lastEventJSON.value = JSON.stringify(customEvent)
+  lastEventJSON.value = JSON.stringify(customEvent, null, 2)
 
   lastUpdateTime.value = new Date().toLocaleTimeString()
 }

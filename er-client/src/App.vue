@@ -25,7 +25,7 @@ import CompassDevice from './components/CompassDevice.vue'
 import { defineComponent, ref, onMounted, onBeforeUnmount, type Ref } from 'vue'
 import { headingDistanceTo, type LatLon } from 'geolocation-utils'
 import { signalStrength } from './track'
-import { SMALL_TRACK } from './scenarios'
+import { THE_TRACK } from './scenarios'
 import { useChargeStore } from './state'
 
 type milliseconds = number
@@ -68,7 +68,7 @@ export default defineComponent({
       console.debug(`Charge: ${chargeStore.charge}`)
 
       if (lastDevicePosition) {
-        const goal = SMALL_TRACK.targetAt(new Date()) // temporary use of the small track scenario
+        const goal = THE_TRACK.targetAt(new Date()) // temporary use of the small track scenario
         const headingDistance = headingDistanceTo(lastDevicePosition, goal)
         console.debug(`Last device position: ${lastDevicePosition}`)
         console.debug(`Signal strength: ${mSignalStrength.value}`)
