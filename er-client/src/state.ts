@@ -4,11 +4,10 @@ import { defineStore } from 'pinia'
 const MAX_CHARGE = 100
 const MIN_CHARGE = 0
 
-
 type Seconds = number
 type PerSecond = number
 
-const EXPECTED_CAPTURE_DURATION: Seconds = 180
+const EXPECTED_CAPTURE_DURATION: Seconds = 420
 
 const INCREASE_RATE: PerSecond = MAX_CHARGE / EXPECTED_CAPTURE_DURATION
 const DECREASE_RATE: PerSecond = INCREASE_RATE * 2
