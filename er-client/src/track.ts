@@ -52,9 +52,8 @@ export class Track {
   }
 }
 
-
 const SIGNAL_STRENGTH_M: number = 100
-const SIGNAL_STRENGTH_T: Meters = 25
+const SIGNAL_STRENGTH_T: Meters = 30
 
 // Computes signal-strength based on distance to target
 //
@@ -65,7 +64,7 @@ const SIGNAL_STRENGTH_T: Meters = 25
 //
 // This function converges to 0 at positive infinity. The further the distance, the lower the value.
 export function signalStrength(distance: Meters): number {
-  return SIGNAL_STRENGTH_M / ( (distance / SIGNAL_STRENGTH_T) + 1 )
+  return SIGNAL_STRENGTH_M / (distance / SIGNAL_STRENGTH_T + 1)
 }
 
 export function interpolate(a: LatLon, b: LatLon, percentFromAToB: number) {

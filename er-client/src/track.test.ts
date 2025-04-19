@@ -16,13 +16,13 @@ test('signal strength decreases with time when stationary', () => {
 })
 
 test('signal strength', () => {
-  const closeToPointA = moveTo(POINT_A, { distance: 25, heading: 45 })
+  const closeToPointA = moveTo(POINT_A, { distance: 30, heading: 45 })
 
   expect(signalStrength(0)).toBe(100)
   expect(signalStrength(5000)).toBeLessThan(1)
-  
+
   expect(signalStrength(distanceTo(POINT_A, POINT_A))).toBe(100)
-  expect(signalStrength(distanceTo(POINT_A, POINT_B))).toBeLessThan(5)
+  expect(signalStrength(distanceTo(POINT_A, POINT_B))).toBeLessThan(6)
   expect(signalStrength(distanceTo(POINT_A, closeToPointA))).toBeCloseTo(50)
 })
 
