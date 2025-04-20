@@ -57,8 +57,26 @@
         </p>
         <p>
           Once fully charged, the device will automatically capture the nearest high-dimensional
-          target.
+          target. The entity will be displayed along with some important information about them.
+          Make sure to <strong>read and remember</strong> this information.
         </p>
+
+        <h4>Supported entities</h4>
+        <p>
+          Here are some examples of high-dimensional entities that can be captured using this
+          device:
+        </p>
+
+        <p><strong>Tidy Tails</strong> - the eco-friendly bunny.</p>
+        <img :src="`${base}tidy_tails.png`" class="example-image" />
+
+        <p>
+          <strong>Woolie Wheels</strong> - she's just a scater lamb, she said see you later, fam!
+        </p>
+        <img :src="`${base}woolie.png`" class="example-image" />
+
+        <p>... and more.</p>
+
         <div style="text-align: right">
           <button @click="open = false">Close</button>
         </div>
@@ -72,14 +90,19 @@ import { ref } from 'vue'
 import { REQUIRED_SIGNAL_STRENGTH } from './SignalStrengthBar.vue'
 
 const open = ref(false)
+const base = import.meta.env.BASE_URL
 </script>
 
 <style scoped>
 .modal-content {
-  background-color: rgba(200, 200, 200, 0.9);
+  background-color: rgba(210, 210, 215, 0.9);
 }
 
 .error {
   color: brown;
+}
+
+.example-image {
+  max-width: 300px;
 }
 </style>
