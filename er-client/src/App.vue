@@ -1,9 +1,9 @@
 <template>
   <header>
-    <h1>Tesser-grab 3000</h1>
+    <h1>Tessertrack 5S</h1>
     <div class="buttons">
       <HelpModal></HelpModal>
-      <DebugModal></DebugModal>
+      <!-- <DebugModal></DebugModal> -->
       <CapturedModal></CapturedModal>
     </div>
   </header>
@@ -17,7 +17,7 @@
 <script lang="ts">
 import ChargeBar from './components/ChargeBar.vue'
 import HelpModal from './components/HelpModal.vue'
-import DebugModal from './components/DebugModal.vue'
+// import DebugModal from './components/DebugModal.vue'
 import CapturedModal from './components/CapturedModal.vue'
 import SignalStrengthBar, { REQUIRED_SIGNAL_STRENGTH } from './components/SignalStrengthBar.vue'
 import CompassDevice from './components/CompassDevice.vue'
@@ -35,7 +35,7 @@ export default defineComponent({
   components: {
     ChargeBar,
     HelpModal,
-    DebugModal,
+    // DebugModal,
     SignalStrengthBar,
     CompassDevice,
     CapturedModal,
