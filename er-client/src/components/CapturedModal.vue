@@ -1,14 +1,29 @@
 <template>
   <Teleport to="body">
     <div v-if="open" class="modal">
-      <h2>Entity captured!</h2>
+      <div class="modal-content">
+        <h2>Entity captured!</h2>
 
-      <p>TODO: something about the entity</p>
+        <p>You have captured the <strong>Roostrider</strong></p>
 
-      <p>TODO: something about the entity's nest</p>
+        <img :src="`${base}roostrider.png`" class="capture-image" />
+        <p>
+          Roostrider, the elusive Easter rooster, is best known for his frantic circular sprints and
+          his signature running shoes. Most active around early spring, he can be spotted dashing in
+          tight loops through suburban backyards and alleyways, leaving behind trails of feathers
+          and faint traces of jellybean dust.
+        </p>
+        <p>
+          Strangely, Roostrider builds his nest <strong>just above household microwaves</strong>.
+          Using lint, snack wrappers, and paper bags, he constructs cozy incubators for his
+          shimmering eggs. These nests, warmed by the microwave's hum, are believed to enhance
+          egg-hatching conditions—though why he prefers kitchens over coops remains one of nature’s
+          most whimsical mysteries.
+        </p>
 
-      <div>
-        <button @click="resetCharge">Reset device (lose charge)</button>
+        <div>
+          <button @click="resetCharge">Reset device (lose charge)</button>
+        </div>
       </div>
     </div>
   </Teleport>
@@ -31,23 +46,20 @@ watch(
 const resetCharge = () => {
   chargeStore.reset()
 }
+
+const base = import.meta.env.BASE_URL
 </script>
 
 <style scoped>
-.modal {
-  box-sizing: border-box;
-  position: fixed;
-  z-index: 999;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  background-color: rgb(203, 252, 225);
-  padding: 3em;
-  overflow: scroll;
+.modal-content {
+  background-color: rgba(203, 252, 225, 0.9);
 }
 
 .error {
   color: brown;
+}
+
+.capture-image {
+  max-width: 100%;
 }
 </style>
