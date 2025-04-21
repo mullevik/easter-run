@@ -103,6 +103,6 @@ const base = import.meta.env.BASE_URL
 }
 
 .example-image {
-  max-width: 300px;
+  max-width: min(100px, 100%);
 }
 </style>
