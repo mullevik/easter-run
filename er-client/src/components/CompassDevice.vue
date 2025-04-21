@@ -1,4 +1,10 @@
 <template>
+  <PermissionModal
+    :open="true"
+    :subject="'orientation'"
+    :event-setup="mSetupOrientation"
+  ></PermissionModal>
+
   <svg width="100%" height="200" viewBox="0 0 200 200">
     <g id="compass" :transform="`translate(100, 100) rotate(${rotation})`">
       <!-- Circle stroke -->
@@ -29,9 +35,13 @@
 
 <script lang="ts">
 import { cleanOrientation, setupOrientation } from '@/orientation'
-import { onMounted, onBeforeUnmount, ref } from 'vue'
+import { onBeforeUnmount, ref } from 'vue'
+import PermissionModal from './PermissionModal.vue'
 
 export default {
+  components: {
+    PermissionModal,
+  },
   props: {
     bearing: {
       type: [Number, null],
@@ -47,16 +57,16 @@ export default {
       // cast to any because DeviceOrientationEvent has .webkitCompassHeading only on iOS
       /* eslint-disable  @typescript-eslint/no-explicit-any */
       const webkitHeading: number | null = (event as any).webkitCompassHeading
-      const rot = - (webkitHeading || Math.abs(alpha - 360))
+      const rot = -(webkitHeading || Math.abs(alpha - 360))
       console.debug(
         `alpha=${alpha}, webkit_heading=${webkitHeading}, rot=${rot}, absolute=${event.absolute}`,
       )
       rotation.value = rot
     }
 
-    onMounted(() => {
-      setupOrientation(handleOrientation)
-    })
+    const mSetupOrientation = () => {
+      return setupOrientation(handleOrientation)
+    }
 
     onBeforeUnmount(() => {
       cleanOrientation(handleOrientation)
@@ -64,6 +74,7 @@ export default {
 
     return {
       rotation,
+      mSetupOrientation,
     }
   },
 }

@@ -3,21 +3,28 @@
 
   <Teleport to="body">
     <div v-if="open" class="modal">
-      <div style="text-align: right">
-        <button @click="open = false">Close</button>
+      <div class="modal-content">
+        <div style="text-align: right">
+          <button @click="open = false">Close</button>
+        </div>
+        <p>UserAgent: {{ userAgent }}</p>
+        <p>LastEvent:</p>
+        <pre><code>{{ lastEventJSON }}</code></pre>
+        <p>Last update at: {{ lastUpdateTime }}</p>
+
+        <p>Status message: {{ statusMessage }}</p>
       </div>
-      <p>UserAgent: {{ userAgent }}</p>
-      <p>LastEvent:</p>
-      <pre><code>{{ lastEventJSON }}</code></pre>
-      <p>Last update at: {{ lastUpdateTime }}</p>
     </div>
   </Teleport>
 </template>
 
 <script setup lang="ts">
 import { cleanOrientation, setupOrientation } from '@/orientation'
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref, defineProps } from 'vue'
 
+defineProps({
+  statusMessage: String,
+})
 const handleOrientation = (event: DeviceOrientationEvent) => {
   const customEvent = {
     alpha: event.alpha,
@@ -46,18 +53,8 @@ const lastUpdateTime = ref('no data')
 </script>
 
 <style scoped>
-.modal {
-  box-sizing: border-box;
-  position: fixed;
-  z-index: 999;
-  top: 0;
-  left: 0;
-  width: 100vw;
-  height: 100vh;
-  /* height: 100%; */
-  background-color: whitesmoke;
-  padding: 3em;
-  overflow: scroll;
+.modal-content {
+  background-color: rgba(240, 240, 240, 0.9);
 }
 
 .error {

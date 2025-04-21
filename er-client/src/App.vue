@@ -2,8 +2,13 @@
   <header>
     <h1>Tessertrack 5S</h1>
     <div class="buttons">
+      <PermissionModal
+        :open="true"
+        :subject="'location'"
+        :event-setup="mSetupLocation"
+      ></PermissionModal>
       <HelpModal></HelpModal>
-      <!-- <DebugModal></DebugModal> -->
+      <DebugModal :statusMessage="mLocationMessage"></DebugModal>
       <CapturedModal></CapturedModal>
     </div>
   </header>
@@ -17,8 +22,9 @@
 <script lang="ts">
 import ChargeBar from './components/ChargeBar.vue'
 import HelpModal from './components/HelpModal.vue'
-// import DebugModal from './components/DebugModal.vue'
+import DebugModal from './components/DebugModal.vue'
 import CapturedModal from './components/CapturedModal.vue'
+import PermissionModal from './components/PermissionModal.vue'
 import SignalStrengthBar, { REQUIRED_SIGNAL_STRENGTH } from './components/SignalStrengthBar.vue'
 import CompassDevice from './components/CompassDevice.vue'
 
@@ -35,15 +41,17 @@ export default defineComponent({
   components: {
     ChargeBar,
     HelpModal,
-    // DebugModal,
+    DebugModal,
     SignalStrengthBar,
     CompassDevice,
     CapturedModal,
+    PermissionModal,
   },
   setup() {
     const mSignalStrength = ref(0)
     const mHeading: Ref<number | null> = ref(null)
     const chargeStore = useChargeStore()
+    const mLocationMessage = ref('Initial state')
 
     let lastDevicePosition: LatLon | null = null
 
@@ -83,23 +91,30 @@ export default defineComponent({
       }
     }
 
-    if (navigator.geolocation) {
-      navigator.geolocation.watchPosition(
-        (position) => {
-          lastDevicePosition = { lat: position.coords.latitude, lon: position.coords.longitude }
-          console.debug(`New position update: ${lastDevicePosition}`)
-        },
-        (error) => {
-          console.error('Error getting location (resetting device location):', error)
-          lastDevicePosition = null
-        },
-        { enableHighAccuracy: true, timeout: 5000 },
-      )
-    } else {
-      console.error('Geolocation is not supported by this browser.')
+    const mSetupLocation = () => {
+      if (navigator.geolocation) {
+        mLocationMessage.value = 'Request for watchPosition initiated'
+
+        navigator.geolocation.watchPosition(
+          (position) => {
+            lastDevicePosition = { lat: position.coords.latitude, lon: position.coords.longitude }
+            console.debug(`New position update: ${lastDevicePosition}`)
+            mLocationMessage.value = 'Got some device position'
+          },
+          (error) => {
+            console.error('Error getting location (resetting device location):', error)
+            lastDevicePosition = null
+            mLocationMessage.value = `Error getting location: '${error}'`
+          },
+          { enableHighAccuracy: true, timeout: 5000 },
+        )
+      } else {
+        console.error('Geolocation is not supported by this browser.')
+        mLocationMessage.value = 'Geolocation is not supported at all'
+      }
     }
 
-    return { mSignalStrength, mHeading, chargeStore }
+    return { mSignalStrength, mHeading, chargeStore, mSetupLocation, mLocationMessage }
   },
 })
 </script>
