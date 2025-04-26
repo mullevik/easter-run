@@ -1,6 +1,6 @@
 <template>
   <PermissionModal
-    :open="true"
+    :open="mAskPermission"
     :subject="'orientation'"
     :event-setup="mSetupOrientation"
   ></PermissionModal>
@@ -35,7 +35,7 @@
 
 <script lang="ts">
 import { cleanOrientation, setupOrientation } from '@/orientation'
-import { onBeforeUnmount, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref } from 'vue'
 import PermissionModal from './PermissionModal.vue'
 
 export default {
@@ -51,6 +51,7 @@ export default {
 
   setup() {
     const rotation = ref(0)
+    const mAskPermission = ref(false)
 
     const handleOrientation = (event: DeviceOrientationEvent) => {
       const alpha: number = event.alpha || 0
@@ -64,9 +65,20 @@ export default {
       rotation.value = rot
     }
 
-    const mSetupOrientation = () => {
-      return setupOrientation(handleOrientation)
+    const logErrorAndAskForPermission = (msg: string) => {
+      console.error(msg)
+      mAskPermission.value = true
     }
+
+    const mSetupOrientation = () => {
+      return setupOrientation(handleOrientation, (msg) => {
+        console.error(msg)
+      })
+    }
+
+    onMounted(() => {
+      setupOrientation(handleOrientation, logErrorAndAskForPermission)
+    })
 
     onBeforeUnmount(() => {
       cleanOrientation(handleOrientation)
@@ -75,6 +87,7 @@ export default {
     return {
       rotation,
       mSetupOrientation,
+      mAskPermission,
     }
   },
 }

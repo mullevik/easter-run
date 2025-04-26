@@ -3,7 +3,7 @@
     <h1>Tessertrack 5S</h1>
     <div class="buttons">
       <PermissionModal
-        :open="true"
+        :open="mAskForPermission"
         :subject="'location'"
         :event-setup="mSetupLocation"
       ></PermissionModal>
@@ -52,6 +52,7 @@ export default defineComponent({
     const mHeading: Ref<number | null> = ref(null)
     const chargeStore = useChargeStore()
     const mLocationMessage = ref('Initial state')
+    const mAskForPermission = ref(false)
 
     let lastDevicePosition: LatLon | null = null
 
@@ -59,6 +60,7 @@ export default defineComponent({
 
     onMounted(() => {
       timer = setInterval(onGameTick, CHARGE_UPDATE_INTERVAL)
+      mSetupLocation() // try to setup location on mount
     })
 
     onBeforeUnmount(() => {
@@ -100,21 +102,31 @@ export default defineComponent({
             lastDevicePosition = { lat: position.coords.latitude, lon: position.coords.longitude }
             console.debug(`New position update: ${lastDevicePosition}`)
             mLocationMessage.value = 'Got some device position'
+            mAskForPermission.value = false
           },
           (error) => {
             console.error('Error getting location (resetting device location):', error)
             lastDevicePosition = null
             mLocationMessage.value = `Error getting location: '${error}'`
+            mAskForPermission.value = true
           },
           { enableHighAccuracy: true, timeout: 5000 },
         )
       } else {
         console.error('Geolocation is not supported by this browser.')
         mLocationMessage.value = 'Geolocation is not supported at all'
+        mAskForPermission.value = true
       }
     }
 
-    return { mSignalStrength, mHeading, chargeStore, mSetupLocation, mLocationMessage }
+    return {
+      mSignalStrength,
+      mHeading,
+      chargeStore,
+      mSetupLocation,
+      mLocationMessage,
+      mAskForPermission,
+    }
   },
 })
 </script>
