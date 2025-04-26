@@ -54,6 +54,7 @@ export class Track {
 
 const SIGNAL_STRENGTH_M: number = 100
 const SIGNAL_STRENGTH_T: Meters = 30
+export const REQUIRED_SIGNAL_STRENGTH: number = 50
 
 // Computes signal-strength based on distance to target
 //

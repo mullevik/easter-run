@@ -87,7 +87,7 @@
 
 <script setup lang="ts">
 import { ref } from 'vue'
-import { REQUIRED_SIGNAL_STRENGTH } from './SignalStrengthBar.vue'
+import { REQUIRED_SIGNAL_STRENGTH } from '../track'
 
 const open = ref(false)
 const base = import.meta.env.BASE_URL

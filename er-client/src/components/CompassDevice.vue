@@ -33,64 +33,55 @@
   </svg>
 </template>
 
-<script lang="ts">
+<script lang="ts" setup>
 import { cleanOrientation, setupOrientation } from '@/orientation'
-import { onBeforeUnmount, onMounted, ref } from 'vue'
+import { onBeforeUnmount, onMounted, ref, defineProps, defineExpose } from 'vue'
 import PermissionModal from './PermissionModal.vue'
 
-export default {
-  components: {
-    PermissionModal,
+defineProps({
+  bearing: {
+    type: [Number, null],
+    default: null,
   },
-  props: {
-    bearing: {
-      type: [Number, null],
-      default: null,
-    },
-  },
+})
 
-  setup() {
-    const rotation = ref(0)
-    const mAskPermission = ref(false)
+const rotation = ref(0)
+const mAskPermission = ref(false)
 
-    const handleOrientation = (event: DeviceOrientationEvent) => {
-      const alpha: number = event.alpha || 0
-      // cast to any because DeviceOrientationEvent has .webkitCompassHeading only on iOS
-      /* eslint-disable  @typescript-eslint/no-explicit-any */
-      const webkitHeading: number | null = (event as any).webkitCompassHeading
-      const rot = -(webkitHeading || Math.abs(alpha - 360))
-      console.debug(
-        `alpha=${alpha}, webkit_heading=${webkitHeading}, rot=${rot}, absolute=${event.absolute}`,
-      )
-      rotation.value = rot
-    }
-
-    const logErrorAndAskForPermission = (msg: string) => {
-      console.error(msg)
-      mAskPermission.value = true
-    }
-
-    const mSetupOrientation = () => {
-      return setupOrientation(handleOrientation, (msg) => {
-        console.error(msg)
-      })
-    }
-
-    onMounted(() => {
-      setupOrientation(handleOrientation, logErrorAndAskForPermission)
-    })
-
-    onBeforeUnmount(() => {
-      cleanOrientation(handleOrientation)
-    })
-
-    return {
-      rotation,
-      mSetupOrientation,
-      mAskPermission,
-    }
-  },
+const handleOrientation = (event: DeviceOrientationEvent) => {
+  const alpha: number = event.alpha || 0
+  // cast to any because DeviceOrientationEvent has .webkitCompassHeading only on iOS
+  /* eslint-disable  @typescript-eslint/no-explicit-any */
+  const webkitHeading: number | null = (event as any).webkitCompassHeading
+  const rot = -(webkitHeading || Math.abs(alpha - 360))
+  console.debug(
+    `alpha=${alpha}, webkit_heading=${webkitHeading}, rot=${rot}, absolute=${event.absolute}`,
+  )
+  rotation.value = rot
 }
+
+const logErrorAndAskForPermission = (msg: string) => {
+  console.error(msg)
+  mAskPermission.value = true
+}
+
+const mSetupOrientation = () => {
+  return setupOrientation(handleOrientation, (msg) => {
+    console.error(msg)
+  })
+}
+
+onMounted(() => {
+  setupOrientation(handleOrientation, logErrorAndAskForPermission)
+})
+
+onBeforeUnmount(() => {
+  cleanOrientation(handleOrientation)
+})
+
+defineExpose({
+  rotation,
+})
 </script>
 
 <style>
