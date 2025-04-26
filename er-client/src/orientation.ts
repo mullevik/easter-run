@@ -2,7 +2,10 @@ function isWebkit(userAgent: string): boolean {
   return userAgent.match(/(iPod|iPhone|iPad)/) !== null && userAgent.match(/AppleWebKit/) != null
 }
 
-export function setupOrientation(handleOrientation: (event: DeviceOrientationEvent) => void) {
+export function setupOrientation(
+  handleOrientation: (event: DeviceOrientationEvent) => void,
+  errorHandlerCallback: (msg: string) => void,
+) {
   if (isWebkit(window.navigator.userAgent)) {
     // cast to any because DeviceOrientationEvent has .requestPermission only on iOS
     /* eslint-disable  @typescript-eslint/no-explicit-any */
@@ -18,16 +21,18 @@ export function setupOrientation(handleOrientation: (event: DeviceOrientationEve
             console.error('permission granted')
             window.addEventListener('deviceorientation', handleOrientation, true)
           } else {
-            console.error('IOS device orientation was not granted')
+            errorHandlerCallback('IOS device orientation was not granted')
           }
         })
-        .catch(() => console.error('IOS device orientation unavailable'))
+        .catch(() => {
+          errorHandlerCallback('IOS device orientation unavailable')
+        })
     } else {
-      console.error('IOS device orientation unavailable')
+      errorHandlerCallback('IOS device orientation unavailable')
     }
   } else {
     if (!window.DeviceOrientationEvent) {
-      console.error('Device orientation not supported')
+      errorHandlerCallback('Device orientation not supported')
     } else {
       window.addEventListener('deviceorientationabsolute', handleOrientation)
       console.debug('Orientation handling mounted')

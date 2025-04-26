@@ -14,7 +14,7 @@
 </template>
 
 <script setup lang="ts">
-import { defineProps, ref } from 'vue'
+import { defineProps, ref, watch } from 'vue'
 
 const props = defineProps({
   open: { type: Boolean, required: true },
@@ -27,8 +27,14 @@ const givePermission = () => {
   props.eventSetup()
   mOpen.value = false
 }
-
 const mOpen = ref(props.open)
+
+watch(
+  () => props.open,
+  (newValue) => {
+    mOpen.value = newValue
+  },
+)
 </script>
 
 <style scoped>
