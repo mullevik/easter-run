@@ -7,7 +7,7 @@ const MIN_CHARGE = 0
 type Seconds = number
 type PerSecond = number
 
-const EXPECTED_CAPTURE_DURATION: Seconds = 300
+const EXPECTED_CAPTURE_DURATION: Seconds = 400
 
 const INCREASE_RATE: PerSecond = MAX_CHARGE / EXPECTED_CAPTURE_DURATION
 const DECREASE_RATE: PerSecond = INCREASE_RATE * 2
