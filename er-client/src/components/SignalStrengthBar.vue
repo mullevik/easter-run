@@ -8,26 +8,15 @@
   </div>
 </template>
 
-<script lang="ts">
-import { computed } from 'vue'
-export const REQUIRED_SIGNAL_STRENGTH: number = 50
-
-export default {
-  props: {
-    signalStrength: {
-      type: Number,
-      default: 0,
-    },
+<script lang="ts" setup>
+import { defineProps } from 'vue'
+import { REQUIRED_SIGNAL_STRENGTH } from '../track'
+defineProps({
+  signalStrength: {
+    type: Number,
+    default: 0,
   },
-  setup(props) {
-    const isCloseEnough = computed(() => props.signalStrength >= REQUIRED_SIGNAL_STRENGTH)
-
-    return {
-      isCloseEnough,
-      REQUIRED_SIGNAL_STRENGTH,
-    }
-  },
-}
+})
 </script>
 
 <style>

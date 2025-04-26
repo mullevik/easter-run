@@ -9,32 +9,23 @@
   </div>
 </template>
 
-<script lang="ts">
-import { toRefs, watch, ref } from 'vue'
+<script lang="ts" setup>
+import { defineProps, toRefs, watch, ref } from 'vue'
 
-export default {
-  props: {
-    charge: {
-      type: Number,
-      default: 0,
-    },
+const props = defineProps({
+  charge: {
+    type: Number,
+    default: 0,
   },
-  setup(props) {
-    const { charge } = toRefs(props)
-    const isCharging = ref(false)
-    const isDischarging = ref(false)
+})
+const { charge } = toRefs(props)
+const isCharging = ref(false)
+const isDischarging = ref(false)
 
-    watch(charge, (newVal, oldVal) => {
-      isCharging.value = newVal > oldVal && newVal < 100
-      isDischarging.value = newVal < oldVal && newVal > 0
-    })
-
-    return {
-      isCharging,
-      isDischarging,
-    }
-  },
-}
+watch(charge, (newVal, oldVal) => {
+  isCharging.value = newVal > oldVal && newVal < 100
+  isDischarging.value = newVal < oldVal && newVal > 0
+})
 </script>
 
 <style>
