@@ -1,7 +1,6 @@
 import { mount } from '@vue/test-utils'
 import assert from 'assert'
-// import { beforeEach, describe, expect, it, test, vi } from 'vitest'
-import { expect, test } from 'vitest'
+import { beforeEach, describe, expect, it, test, vi } from 'vitest'
 import CompassDevice from './CompassDevice.vue'
 
 test('points to north on default', () => {
