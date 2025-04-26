@@ -39,7 +39,9 @@ const handleOrientation = (event: DeviceOrientationEvent) => {
   lastUpdateTime.value = new Date().toLocaleTimeString()
 }
 onMounted(() => {
-  setupOrientation(handleOrientation)
+  setupOrientation(handleOrientation, (msg) => {
+    console.error(msg)
+  })
 })
 
 onBeforeUnmount(() => {
