@@ -1,39 +1,31 @@
-# er-client
+# Easter run
 
-This template should help get you started developing with Vue 3 in Vite.
+Augmented-reality game where the goal is to stay in proximity to a moving entity.
 
-## Recommended IDE Setup
+The web app reqires geolocation access and device orientation access (including the magnetic field sensor to point to north).
 
-[VSCode](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur).
+The whole game is stateless with hard-coded track for the entity to move along.
 
-## Type Support for `.vue` Imports in TS
+## Install
 
-TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) to make the TypeScript language service aware of `.vue` types.
-
-## Customize configuration
-
-See [Vite Configuration Reference](https://vite.dev/config/).
-
-## Project Setup
-
-```sh
+```
 npm install
 ```
 
-### Compile and Hot-Reload for Development
+## Usage
 
-```sh
-npm run dev
+```
+npm run dev  # run local dev server
+npm run test  # run unit tests
+npm run build  # build for prod
 ```
 
-### Type-Check, Compile and Minify for Production
 
-```sh
-npm run build
-```
+## Used technologies
+- Vue 3 with compositional API
+- TypeScript
+- GitHub pipelines
 
-### Lint with [ESLint](https://eslint.org/)
 
-```sh
-npm run lint
-```
+## Developer's note
+This is just a side project for Vue 3 and TypeScript practice.
