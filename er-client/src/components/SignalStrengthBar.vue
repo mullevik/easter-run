@@ -1,6 +1,6 @@
 <template>
   <div class="container">
-    <p>Signal strength</p>
+    <p>Signal strength: {{ signalStrength.toFixed(1) }} %</p>
     <progress :value="signalStrength" max="100" />
     <div class="measure-wrapper">
       <div class="measure" :style="`width: ${REQUIRED_SIGNAL_STRENGTH}%`"></div>
